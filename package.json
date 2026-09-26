@@ -1,0 +1,11 @@
+{
+  "name": "denzo-studio",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node server.js",
+    "build": "node -e \"console.log('Static site ready - no build step needed')\"",
+    "start": "node server.js"
+  }
+}

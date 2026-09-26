@@ -1,0 +1,539 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Denzo Studio</title>
+    <meta
+      name="description"
+      content="Smooth GSAP-powered preloader-to-hero animation sequence with split-wordmark video reveal and luxury editorial layout."
+    />
+    <meta property="og:title" content="Denzo Studio" />
+    <meta
+      property="og:description"
+      content="Smooth GSAP-powered preloader-to-hero animation sequence with split-wordmark video reveal and luxury editorial layout."
+    />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <!-- Three.js & GLTFLoader via CDN (Importmap MUST precede all script tags) -->
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+          "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+        }
+      }
+    </script>
+    <script type="module">
+      async function loadThreeModules() {
+        try {
+          const THREE = await import('three');
+          const { GLTFLoader } = await import('three/addons/loaders/GLTFLoader.js');
+          const { RoomEnvironment } = await import('three/addons/environments/RoomEnvironment.js');
+          window.THREE = THREE;
+          window.GLTFLoader = GLTFLoader;
+          window.RoomEnvironment = RoomEnvironment;
+          window.dispatchEvent(new CustomEvent('three-ready'));
+        } catch (err) {
+          const THREE = await import('https://esm.sh/three@0.170.0');
+          const { GLTFLoader } = await import(
+            'https://esm.sh/three@0.170.0/examples/jsm/loaders/GLTFLoader.js'
+          );
+          const { RoomEnvironment } = await import(
+            'https://esm.sh/three@0.170.0/examples/jsm/environments/RoomEnvironment.js'
+          );
+          window.THREE = THREE;
+          window.GLTFLoader = GLTFLoader;
+          window.RoomEnvironment = RoomEnvironment;
+          window.dispatchEvent(new CustomEvent('three-ready'));
+        }
+      }
+      loadThreeModules();
+    </script>
+
+    <!-- Google Font: Host Grotesk & Fraunces Serif -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@1,9..144,300..700&family=Host+Grotesk:ital,wght@0,300..800;1,300..800&family=Playfair+Display:ital,wght@1,400..700&family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,600&display=swap"
+      rel="stylesheet"
+    />
+    <!-- Recoleta font support via cdnfonts -->
+    <link rel="stylesheet" href="https://fonts.cdnfonts.com/css/recoleta" />
+
+    <!-- GSAP, SplitText, CustomEase & ScrollTrigger via CDN in Head -->
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/SplitText.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/CustomEase.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
+
+    <!-- Vanilla CSS Stylesheet -->
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <!-- Main Interactive Stage -->
+    <main id="stage" aria-label="Oakâme Hero Experience">
+      <!-- Full-Bleed Scaling Center Video (Mounted in gap, scales up to hero background) -->
+      <div id="video-wrapper" class="video-wrapper">
+        <video
+          id="hero-video"
+          class="hero-video"
+          autoplay
+          muted
+          loop
+          playsinline
+          preload="auto"
+          src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260723_145606_ab143199-b593-4941-bb1b-9afca215416b.mp4"
+        ></video>
+        <!-- Dark gradient overlay for typography contrast -->
+        <div id="video-overlay" class="video-overlay" aria-hidden="true"></div>
+      </div>
+
+      <!-- Interactive 3D Brand Object Stage (Centered in Hero Section) -->
+      <div id="hero-3d-wrapper" class="hero-3d-wrapper" aria-hidden="true">
+        <div class="hero-3d-ambient-glow"></div>
+        <canvas id="hero-3d-canvas" class="hero-3d-canvas"></canvas>
+      </div>
+
+      <!-- Site Navigation Bar with Interactive Menu, Sound Toggle & Contact Trigger -->
+      <header id="nav" class="navbar site-header">
+        <div class="nav-container">
+          <!-- Zone 1: Brand Wordmark / Logo Image -->
+          <a href="#stage" class="nav-brand logo" aria-label="Accueil">
+            <img
+              src="https://raw.githubusercontent.com/codeovik/Denzo-files/refs/heads/main/logo.png"
+              alt="Denzo"
+              class="nav-logo-img"
+            />
+          </a>
+
+          <!-- Zone 2: Interactive Right Actions Group (Unified for all breakpoints) -->
+          <div class="nav-right-actions">
+            <!-- Audio toggle button -->
+            <button
+              type="button"
+              id="sound-toggle"
+              title="Enable sound"
+              aria-pressed="false"
+              aria-label="Enable sound"
+              class="sound-toggle-btn nav-action-item"
+            >
+              <svg width="16" height="15" viewBox="0 0 16 15" fill="none" class="sound-icon">
+                <g class="sound-waves" opacity="0.4">
+                  <path d="M13.7223 1.45716C13.5773 1.31116 13.3425 1.31116 13.1975 1.45716C13.0526 1.60326 13.0526 1.84007 13.1975 1.98617C14.5261 3.32546 15.2578 5.10621 15.2578 7.00034C15.2578 8.89447 14.5261 10.6752 13.1975 12.0145C13.0526 12.1606 13.0526 12.3974 13.1975 12.5435C13.27 12.6165 13.365 12.6531 13.4599 12.6531C13.5548 12.6531 13.6498 12.6165 13.7223 12.5435C15.1909 11.0629 15.9998 9.09428 15.9998 7.00034C15.9998 4.90641 15.1909 2.9378 13.7223 1.45716Z" fill="currentColor"></path>
+                  <path d="M12.1651 4.03432C12.0203 3.88832 11.7853 3.88826 11.6404 4.03437C11.4955 4.18042 11.4955 4.41723 11.6404 4.56333C12.2848 5.21289 12.6396 6.07801 12.6396 6.99943C12.6396 7.92084 12.2848 8.78596 11.6404 9.43552C11.4955 9.58162 11.4955 9.81842 11.6404 9.96448C11.7129 10.0375 11.8078 10.0741 11.9028 10.0741C11.9977 10.0741 12.0927 10.0375 12.1651 9.96453C12.9496 9.17367 13.3817 8.12065 13.3817 6.99943C13.3817 5.8782 12.9496 4.82519 12.1651 4.03432Z" fill="currentColor"></path>
+                  <path d="M9.40909 0.0603026C9.20504 -0.0396761 8.96751 -0.0139545 8.78915 0.127196L4.5934 3.45119L4.38994 3.61238V6.99429C4.38994 7.20824 4.21789 7.38169 4.00566 7.38169C3.79344 7.38169 3.62139 7.20824 3.62139 6.99429V3.62231H1.05146C0.471695 3.62231 0 4.09784 0 4.68233V9.3176C0 9.90214 0.471695 10.3777 1.05146 10.3777H3.95735H4.37739L4.59339 10.5488L7.27858 12.676V10.051C7.27858 9.83708 7.45063 9.66364 7.66285 9.66364C7.87508 9.66364 8.04712 9.83708 8.04712 10.051V13.2849L8.78909 13.8727C8.89536 13.9568 9.02259 14 9.15127 14C9.23859 14 9.32658 13.9801 9.40904 13.9397C9.61307 13.8398 9.73984 13.6356 9.73984 13.4069V0.593075C9.73984 0.36442 9.61313 0.16023 9.40909 0.0603026Z" fill="currentColor"></path>
+                </g>
+                <line class="sound-slash" x1="15" y1="0.707595" x2="1.70711" y2="14.0005" stroke="currentColor" stroke-opacity="0.8" stroke-linecap="round"></line>
+              </svg>
+            </button>
+
+            <!-- "let's talk" Contact Modal Trigger -->
+            <button
+              type="button"
+              class="lets-talk-btn nav-action-item"
+              data-contact-trigger
+              aria-label="Let's talk - Open contact form"
+            >
+              <span class="lets-talk-text">Let Us Talk</span>
+            </button>
+
+            <!-- Unified Menu Toggle Button for All Breakpoints -->
+            <div class="menu-toggle-wrap nav-action-item">
+              <button
+                type="button"
+                class="main-toggle"
+                aria-label="Toggle Menu"
+                aria-expanded="false"
+              >
+                <span class="main-toggle-label">Menu</span>
+                <div class="main__humburger" aria-hidden="true">
+                  <span class="hamburger-line line-1"></span>
+                  <span class="hamburger-line line-2"></span>
+                </div>
+              </button>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Preloader Stage (Active during preloader sequence) -->
+      <div class="preloader-stage" aria-hidden="true">
+        <!-- Top Monogram/Logo Image -->
+        <div id="preloader-top-logo" class="preloader-top-logo">
+          <img
+            src="https://raw.githubusercontent.com/codeovik/Denzo-files/refs/heads/main/logo.png"
+            alt="Logo"
+            class="preloader-logo-img"
+          />
+        </div>
+
+        <!-- Wordmark Container: SplitText applied to #word, then splits into "OAK" and "ÂME" -->
+        <div class="wordmark-stage">
+          <div id="word" class="wordmark-container">
+            <span id="split-left" class="split-part split-left">DEN</span>
+            <span id="split-right" class="split-part split-right">ZO</span>
+          </div>
+          <!-- Dual tabular counters flanking the center video gap -->
+          <span id="counter-left" class="counter-flank counter-left">00</span>
+          <span id="counter-right" class="counter-flank counter-right">00</span>
+        </div>
+
+        <!-- Bottom Tagline -->
+        <p id="preloader-tagline" class="preloader-tagline">
+          ✦ AI-powered technology. Built for growth.
+        </p>
+      </div>
+
+      <!-- Hero Content (Revealed after video expansion) -->
+      <section class="hero-content" aria-labelledby="hero-heading">
+        <!-- Left Column: Hero Text & CTA Actions -->
+        <div class="hero-text-col">
+          <!-- Hero Title, Capsule & Sub-headline Group -->
+          <div class="hero-title-group">
+            <!-- Capsule Eyebrow Badge -->
+            <span id="hero-eyebrow" class="hero-eyebrow">
+              <span class="capsule-sparkle" aria-hidden="true">✦</span>
+              <span class="capsule-text">AI-powered technology. Built for growth.</span>
+            </span>
+
+            <!-- Main Display Headline -->
+            <h1 id="hero-heading" class="hero-heading">
+              We Build <span class="hero-headline-highlight">Intelligent</span><br class="hero-br" /> Digital Experiences.
+            </h1>
+
+            <!-- Editorial Sub-headline -->
+            <p id="hero-subheading" class="hero-subheading">
+              AI solutions, automations, applications, and websites designed to help businesses work smarter, connect better, and grow faster.
+            </p>
+          </div>
+
+          <!-- Award-Winning Hero CTA Actions Panel -->
+          <div id="hero-cta-panel" class="hero-cta-panel">
+            <!-- Primary CTA: Start a Project -->
+            <a
+              href="#contact"
+              class="hero-cta-btn hero-cta-primary"
+              data-contact-trigger
+              aria-label="Start a Project - Open contact inquiry modal"
+            >
+              <span class="hero-cta-text">Start a Project</span>
+            </a>
+
+            <!-- Secondary CTA: Explore What We Build -->
+            <a
+              href="#work"
+              class="hero-cta-btn hero-cta-secondary"
+              aria-label="Explore What We Build - View showcase"
+            >
+              <span class="hero-cta-text">Explore What We Build</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Right Side: Interactive Animated "Scroll To See" Indicator -->
+        <div id="hero-scroll-indicator" class="hero-scroll-indicator" aria-label="Scroll to see">
+          <div class="scroll-mouse-pill" aria-hidden="true">
+            <span class="scroll-wheel-track"></span>
+          </div>
+          <div class="scroll-label-wrap">
+            <span class="scroll-text">Scroll To See</span>
+            <svg class="scroll-chevron" width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+              <path d="M2.5 4.5L6 8L9.5 4.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+        </div>
+      </section>
+      <!-- ==================== UNIFIED CIRCULAR MENU DRAWER (Pixel-Perfect Reference Match) ==================== -->
+      <div id="desktopMenuWrap" class="menu-wrapper invisible" style="display:none;" aria-hidden="true">
+        <div class="menu-backdrop" id="desktopMenuBackdrop"></div>
+        <div
+          id="desktopMenuRef"
+          class="menu-block"
+          style="clip-path:circle(0% at 95% 5%);opacity:0;visibility:hidden"
+        >
+          <button
+            type="button"
+            id="desktopMenuCloseBtn"
+            aria-label="Close menu"
+            class="menu-close-btn"
+          >
+            <svg viewBox="0 0 24 24" width="13" height="13">
+              <path d="M4 4 L20 20 M20 4 L4 20" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path>
+            </svg>
+          </button>
+
+          <div class="desktop-menu-inner">
+            <div class="desktop-menu-top">
+              <ul class="menu-items-list">
+                <li class="menu-item">
+                  <a class="menu-link" href="#work">
+                    <span class="menu-link-text">Work</span>
+                    <svg class="menu-link-arrow" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                      <path d="M4 12L12 4M12 4H6M12 4V10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </a>
+                </li>
+                <li class="menu-item">
+                  <a class="menu-link" href="#services">
+                    <span class="menu-link-text">Services</span>
+                    <svg class="menu-link-arrow" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                      <path d="M4 12L12 4M12 4H6M12 4V10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </a>
+                </li>
+                <li class="menu-item">
+                  <a class="menu-link" href="#about">
+                    <span class="menu-link-text">About</span>
+                    <svg class="menu-link-arrow" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                      <path d="M4 12L12 4M12 4H6M12 4V10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </a>
+                </li>
+                <li class="menu-item">
+                  <a class="menu-link" href="#contact">
+                    <span class="menu-link-text">Contact</span>
+                    <svg class="menu-link-arrow" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                      <path d="M4 12L12 4M12 4H6M12 4V10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </a>
+                </li>
+              </ul>
+
+              <div class="story-link-wrap">
+                <a class="story-pill-link" href="#story">
+                  <span class="story-star">✦</span>
+                  <span class="story-text">The Trionn Name Story</span>
+                </a>
+              </div>
+            </div>
+
+            <div class="desktop-menu-bottom">
+              <div class="footer-enquiry">
+                <span class="footer-label">BUSINESS ENQUIRY</span>
+                <div class="footer-contacts">
+                  <p class="enquiry-row">
+                    <span class="contact-prefix">E.</span>
+                    <a class="contact-val" href="mailto:hello@trionn.com">
+                      <span class="val-text">hello@trionn.com</span>
+                    </a>
+                  </p>
+                  <p class="enquiry-row">
+                    <span class="contact-prefix">P.</span>
+                    <a class="contact-val" href="tel:+919824182099">
+                      <span class="val-text">+91 9824182099</span>
+                    </a>
+                  </p>
+                </div>
+              </div>
+
+              <div class="footer-social">
+                <span class="footer-label">SOCIAL</span>
+                <div class="social-grid">
+                  <div class="social-col">
+                    <p><a class="social-link" target="_blank" rel="noopener" href="https://linkedin.com"><span class="social-text">Linkedin</span></a></p>
+                    <p><a class="social-link" target="_blank" rel="noopener" href="https://dribbble.com"><span class="social-text">Dribbble</span></a></p>
+                  </div>
+                  <div class="social-col">
+                    <p><a class="social-link" target="_blank" rel="noopener" href="https://facebook.com"><span class="social-text">Facebook</span></a></p>
+                    <p><a class="social-link" target="_blank" rel="noopener" href="https://instagram.com"><span class="social-text">Instagram</span></a></p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== CONTACT POPUP MODAL ==================== -->
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-label="Contact DENZO"
+        class="contact-popup-wrapper invisible"
+        id="contactPopupWrapper"
+        style="display:none;opacity:0;pointer-events:none"
+      >
+        <div class="contact-popup-backdrop" id="contactPopupBackdrop"></div>
+
+        <div
+          id="contactPopupPanel"
+          class="contact-popup-panel"
+          style="clip-path:circle(0% at 95% 5%);opacity:0;visibility:hidden"
+        >
+          <button
+            type="button"
+            id="contactCloseBtn"
+            aria-label="Close contact form"
+            class="contact-close-btn"
+          >
+            <svg viewBox="0 0 24 24" width="12" height="12">
+              <path d="M4 4 L20 20 M20 4 L4 20" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path>
+            </svg>
+          </button>
+
+          <div class="contact-popup-inner">
+            <div class="contact-form-section">
+              <div class="contact-header-block stagger-item">
+                <h2 class="contact-h2">Let's build something great.</h2>
+                <p class="contact-sub">Tell us about your project, we usually reply within one business day.</p>
+              </div>
+
+              <form class="contact-form stagger-item" id="inquiry-form" onsubmit="event.preventDefault();">
+                <input
+                  type="text"
+                  placeholder="Full Name *"
+                  required
+                  aria-label="Full Name *"
+                  class="form-input"
+                />
+                <input
+                  type="email"
+                  placeholder="Email address *"
+                  required
+                  aria-label="Email Address *"
+                  class="form-input"
+                />
+                <input
+                  type="text"
+                  placeholder="Company / Website name"
+                  aria-label="Company / Website"
+                  class="form-input"
+                />
+
+                <!-- Custom Service Dropdown -->
+                <div class="custom-select-box relative">
+                  <button
+                    type="button"
+                    aria-haspopup="listbox"
+                    aria-expanded="false"
+                    class="select-trigger"
+                  >
+                    <span class="select-val is-placeholder">Select a service</span>
+                    <svg width="9" height="10" viewBox="0 0 9 10" fill="none" class="select-arrow">
+                      <path d="M0 5.47422L2.1 5.47422L4.9 8.33022L3.752 8.33022L6.552 5.47422H8.652L4.816 9.32422L3.836 9.32422L0 5.47422ZM3.542 0.000218391H5.11V8.61022L3.542 8.61022L3.542 0.000218391Z" fill="currentColor"></path>
+                    </svg>
+                  </button>
+                  <div role="listbox" class="select-dropdown invisible opacity-0 -translate-y-2 pointer-events-none">
+                    <button type="button" role="option" class="select-option">Website Design & Development</button>
+                    <button type="button" role="option" class="select-option">UI/UX & Interactive Design</button>
+                    <button type="button" role="option" class="select-option">Full-Stack Web Development</button>
+                    <button type="button" role="option" class="select-option">Mobile Application Design</button>
+                    <button type="button" role="option" class="select-option">Branding & Motion Identity</button>
+                    <button type="button" role="option" class="select-option">AI-Powered Digital Experience</button>
+                  </div>
+                </div>
+
+                <textarea
+                  rows="4"
+                  placeholder="Share a little about your goals, timeline, and requirements..."
+                  class="form-textarea"
+                ></textarea>
+
+                <!-- Custom Budget Dropdown -->
+                <div class="custom-select-box relative">
+                  <button
+                    type="button"
+                    aria-haspopup="listbox"
+                    aria-expanded="false"
+                    class="select-trigger"
+                  >
+                    <span class="select-val is-placeholder">Select your estimated budget</span>
+                    <svg width="9" height="10" viewBox="0 0 9 10" fill="none" class="select-arrow">
+                      <path d="M0 5.47422L2.1 5.47422L4.9 8.33022L3.752 8.33022L6.552 5.47422H8.652L4.816 9.32422L3.836 9.32422L0 5.47422ZM3.542 0.000218391H5.11V8.61022L3.542 8.61022L3.542 0.000218391Z" fill="currentColor"></path>
+                    </svg>
+                  </button>
+                  <div role="listbox" class="select-dropdown invisible opacity-0 -translate-y-2 pointer-events-none">
+                    <button type="button" role="option" class="select-option">Under $5K</button>
+                    <button type="button" role="option" class="select-option">$5K - $15K</button>
+                    <button type="button" role="option" class="select-option">$15K - $30K</button>
+                    <button type="button" role="option" class="select-option">$30K - $60K</button>
+                    <button type="button" role="option" class="select-option">$60K+</button>
+                    <button type="button" role="option" class="select-option">Not sure yet</button>
+                  </div>
+                </div>
+
+                <button type="submit" class="form-submit-btn">
+                  Send Inquiry
+                </button>
+                <div class="form-success-banner" style="display:none;">
+                  ✓ Thank you! Your inquiry has been sent. We'll reply within 24 hours.
+                </div>
+              </form>
+            </div>
+
+            <div class="contact-footer-section stagger-item">
+              <a
+                target="_blank"
+                rel="noopener noreferrer"
+                class="book-call-btn"
+                href="https://calendly.com"
+              >
+                Book a 30-Minute Call
+              </a>
+              <p class="contact-footer-note">Prefer email? <a class="footer-email-link" href="mailto:hello@denzo.studio">hello@denzo.studio</a></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- ==================== AI STATEMENT SECTION (Scroll Reveal Editorial Section) ==================== -->
+    <section
+      id="ai-statement-section"
+      class="ai-statement-section"
+      aria-label="AI is where we start"
+    >
+      <div class="ai-statement-container">
+        <!-- Brand Capsule -->
+        <div class="ai-capsule-wrap">
+          <span
+            id="ai-start-capsule"
+            class="ai-start-capsule text-xs tracking-wider font-semibold text-black px-4 py-2.5 rounded-full inline-flex items-center gap-1.5 select-none"
+          >
+            <span class="ai-start-capsule-dot w-1.5 h-1.5 rounded-full shrink-0" aria-hidden="true"></span>
+            <span>AI is where we start.</span>
+          </span>
+        </div>
+
+        <!-- On-Screen Editorial Text with Inline Rounded Cinematic Images -->
+        <h2 id="ai-statement-text" class="ai-statement-text">
+          <span class="ai-word-chunk">We use</span>
+          <span class="inline-media-pill ai-reveal-media" aria-hidden="true">
+            <img
+              src="https://raw.githubusercontent.com/codeovik/Denzo-files/refs/heads/main/robot.jpg"
+              alt="AI Robotics"
+              class="inline-media-img"
+              loading="eager"
+            />
+          </span>
+          <span class="ai-word-chunk ai-brand-highlight">artificial intelligence</span>
+          <span class="ai-word-chunk">to build smarter systems,</span>
+          <span class="inline-media-pill ai-reveal-media" aria-hidden="true">
+            <img
+              src="https://raw.githubusercontent.com/codeovik/Denzo-files/refs/heads/main/automation.jpg"
+              alt="Intelligent Automation"
+              class="inline-media-img"
+              loading="eager"
+            />
+          </span>
+          <span class="ai-word-chunk">automate processes, create better</span>
+          <span class="inline-media-pill ai-reveal-media" aria-hidden="true">
+            <img
+              src="https://raw.githubusercontent.com/codeovik/Denzo-files/refs/heads/main/vr.jpg"
+              alt="Immersive Customer Experiences"
+              class="inline-media-img"
+              loading="eager"
+            />
+          </span>
+          <span class="ai-word-chunk">customer experiences, and unlock new ways for</span>
+          <span class="ai-word-chunk ai-brand-highlight">businesses to grow.</span>
+        </h2>
+      </div>
+    </section>
+
+    <!-- Vanilla Javascript Logic -->
+    <script src="./script.js"></script>
+  </body>
+</html>
