@@ -1,0 +1,1512 @@
+<!doctype html>
+<html lang="en" class="preloader-active">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script>
+      if ('scrollRestoration' in history) {
+        history.scrollRestoration = 'manual';
+      }
+      window.scrollTo(0, 0);
+    </script>
+    <title>Denzo Studio</title>
+    <meta
+      name="description"
+      content="Smooth GSAP-powered preloader-to-hero animation sequence with split-wordmark video reveal and luxury editorial layout."
+    />
+    <meta property="og:title" content="Denzo Studio" />
+    <meta
+      property="og:description"
+      content="Smooth GSAP-powered preloader-to-hero animation sequence with split-wordmark video reveal and luxury editorial layout."
+    />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <!-- Three.js & GLTFLoader via CDN (Importmap MUST precede all script tags) -->
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+          "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+        }
+      }
+    </script>
+    <script type="module">
+      async function loadThreeModules() {
+        try {
+          const THREE = await import('three');
+          const { GLTFLoader } = await import('three/addons/loaders/GLTFLoader.js');
+          const { RoomEnvironment } = await import('three/addons/environments/RoomEnvironment.js');
+          window.THREE = THREE;
+          window.GLTFLoader = GLTFLoader;
+          window.RoomEnvironment = RoomEnvironment;
+          window.dispatchEvent(new CustomEvent('three-ready'));
+        } catch (err) {
+          const THREE = await import('https://esm.sh/three@0.170.0');
+          const { GLTFLoader } = await import(
+            'https://esm.sh/three@0.170.0/examples/jsm/loaders/GLTFLoader.js'
+          );
+          const { RoomEnvironment } = await import(
+            'https://esm.sh/three@0.170.0/examples/jsm/environments/RoomEnvironment.js'
+          );
+          window.THREE = THREE;
+          window.GLTFLoader = GLTFLoader;
+          window.RoomEnvironment = RoomEnvironment;
+          window.dispatchEvent(new CustomEvent('three-ready'));
+        }
+      }
+      loadThreeModules();
+    </script>
+
+    <!-- Google Font: Host Grotesk & Fraunces Serif -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@1,9..144,300..700&family=Host+Grotesk:ital,wght@0,300..800;1,300..800&family=JetBrains+Mono:wght@400..700&family=Playfair+Display:ital,wght@1,400..700&family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,600&display=swap"
+      rel="stylesheet"
+    />
+    <!-- Recoleta font support via cdnfonts -->
+    <link rel="stylesheet" href="https://fonts.cdnfonts.com/css/recoleta" />
+
+    <!-- GSAP, SplitText, CustomEase, ScrollTrigger & Lenis Smooth Scroll via CDN in Head -->
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/SplitText.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/CustomEase.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lenis@1.2.3/dist/lenis.min.js"></script>
+
+    <!-- Vanilla CSS Stylesheet -->
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body class="preloader-active">
+    <!-- Main Interactive Stage -->
+    <main id="stage" aria-label="Oakâme Hero Experience">
+      <!-- Full-Bleed Scaling Center Video (Mounted in gap, scales up to hero background) -->
+      <div id="video-wrapper" class="video-wrapper">
+        <video
+          id="hero-video"
+          class="hero-video"
+          autoplay
+          muted
+          loop
+          playsinline
+          preload="auto"
+          src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260723_145606_ab143199-b593-4941-bb1b-9afca215416b.mp4"
+        ></video>
+        <!-- Dark gradient overlay for typography contrast -->
+        <div id="video-overlay" class="video-overlay" aria-hidden="true"></div>
+      </div>
+
+      <!-- Interactive 3D Brand Object Stage (Centered in Hero Section) -->
+      <div id="hero-3d-wrapper" class="hero-3d-wrapper" aria-hidden="true">
+        <div class="hero-3d-ambient-glow"></div>
+        <canvas id="hero-3d-canvas" class="hero-3d-canvas"></canvas>
+      </div>
+
+      <!-- Site Navigation Bar with Interactive Menu, Sound Toggle & Contact Trigger -->
+      <header id="nav" class="navbar site-header">
+        <div class="nav-container">
+          <!-- Zone 1: Brand Wordmark / Logo Image -->
+          <a href="#" target="_blank" class="nav-brand logo" aria-label="Accueil">
+            <img
+              src="https://raw.githubusercontent.com/codeovik/Denzo-files/refs/heads/main/logo.png"
+              alt="Denzo"
+              class="nav-logo-img"
+            />
+          </a>
+
+          <!-- Zone 2: Interactive Right Actions Group (Unified for all breakpoints) -->
+          <div class="nav-right-actions">
+            <!-- Audio toggle button -->
+            <button
+              type="button"
+              id="sound-toggle"
+              title="Enable sound"
+              aria-pressed="false"
+              aria-label="Enable sound"
+              class="sound-toggle-btn nav-action-item"
+            >
+              <svg width="16" height="15" viewBox="0 0 16 15" fill="none" class="sound-icon">
+                <g class="sound-waves" opacity="0.4">
+                  <path d="M13.7223 1.45716C13.5773 1.31116 13.3425 1.31116 13.1975 1.45716C13.0526 1.60326 13.0526 1.84007 13.1975 1.98617C14.5261 3.32546 15.2578 5.10621 15.2578 7.00034C15.2578 8.89447 14.5261 10.6752 13.1975 12.0145C13.0526 12.1606 13.0526 12.3974 13.1975 12.5435C13.27 12.6165 13.365 12.6531 13.4599 12.6531C13.5548 12.6531 13.6498 12.6165 13.7223 12.5435C15.1909 11.0629 15.9998 9.09428 15.9998 7.00034C15.9998 4.90641 15.1909 2.9378 13.7223 1.45716Z" fill="currentColor"></path>
+                  <path d="M12.1651 4.03432C12.0203 3.88832 11.7853 3.88826 11.6404 4.03437C11.4955 4.18042 11.4955 4.41723 11.6404 4.56333C12.2848 5.21289 12.6396 6.07801 12.6396 6.99943C12.6396 7.92084 12.2848 8.78596 11.6404 9.43552C11.4955 9.58162 11.4955 9.81842 11.6404 9.96448C11.7129 10.0375 11.8078 10.0741 11.9028 10.0741C11.9977 10.0741 12.0927 10.0375 12.1651 9.96453C12.9496 9.17367 13.3817 8.12065 13.3817 6.99943C13.3817 5.8782 12.9496 4.82519 12.1651 4.03432Z" fill="currentColor"></path>
+                  <path d="M9.40909 0.0603026C9.20504 -0.0396761 8.96751 -0.0139545 8.78915 0.127196L4.5934 3.45119L4.38994 3.61238V6.99429C4.38994 7.20824 4.21789 7.38169 4.00566 7.38169C3.79344 7.38169 3.62139 7.20824 3.62139 6.99429V3.62231H1.05146C0.471695 3.62231 0 4.09784 0 4.68233V9.3176C0 9.90214 0.471695 10.3777 1.05146 10.3777H3.95735H4.37739L4.59339 10.5488L7.27858 12.676V10.051C7.27858 9.83708 7.45063 9.66364 7.66285 9.66364C7.87508 9.66364 8.04712 9.83708 8.04712 10.051V13.2849L8.78909 13.8727C8.89536 13.9568 9.02259 14 9.15127 14C9.23859 14 9.32658 13.9801 9.40904 13.9397C9.61307 13.8398 9.73984 13.6356 9.73984 13.4069V0.593075C9.73984 0.36442 9.61313 0.16023 9.40909 0.0603026Z" fill="currentColor"></path>
+                </g>
+                <line class="sound-slash" x1="15" y1="0.707595" x2="1.70711" y2="14.0005" stroke="currentColor" stroke-opacity="0.8" stroke-linecap="round"></line>
+              </svg>
+            </button>
+
+            <!-- "let's talk" Contact Modal Trigger -->
+            <button
+              type="button"
+              class="lets-talk-btn nav-action-item"
+              data-contact-trigger
+              aria-label="Let's talk - Open contact form"
+            >
+              <span class="lets-talk-text">Let Us Talk</span>
+            </button>
+
+            <!-- Unified Menu Toggle Button for All Breakpoints -->
+            <div class="menu-toggle-wrap nav-action-item">
+              <button
+                type="button"
+                class="main-toggle"
+                aria-label="Toggle Menu"
+                aria-expanded="false"
+              >
+                <span class="main-toggle-label">Menu</span>
+                <div class="main__humburger" aria-hidden="true">
+                  <span class="hamburger-line line-1"></span>
+                  <span class="hamburger-line line-2"></span>
+                </div>
+              </button>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Preloader Stage (Active during preloader sequence) -->
+      <div class="preloader-stage" aria-hidden="true">
+        <!-- Top Monogram/Logo Image -->
+        <div id="preloader-top-logo" class="preloader-top-logo">
+          <img
+            src="https://raw.githubusercontent.com/codeovik/Denzo-files/refs/heads/main/logo.png"
+            alt="Logo"
+            class="preloader-logo-img"
+          />
+        </div>
+
+        <!-- Wordmark Container: SplitText applied to #word, then splits into "OAK" and "ÂME" -->
+        <div class="wordmark-stage">
+          <div id="word" class="wordmark-container">
+            <span id="split-left" class="split-part split-left">DEN</span>
+            <span id="split-right" class="split-part split-right">ZO</span>
+          </div>
+          <!-- Dual tabular counters flanking the center video gap -->
+          <span id="counter-left" class="counter-flank counter-left">00</span>
+          <span id="counter-right" class="counter-flank counter-right">00</span>
+        </div>
+
+        <!-- Bottom Tagline -->
+        <p id="preloader-tagline" class="preloader-tagline">
+          ✦ AI-powered technology. Built for growth.
+        </p>
+      </div>
+
+      <!-- Hero Content (Revealed after video expansion) -->
+      <section class="hero-content" aria-labelledby="hero-heading">
+        <!-- Left Column: Hero Text & CTA Actions -->
+        <div class="hero-text-col">
+          <!-- Hero Title, Capsule & Sub-headline Group -->
+          <div class="hero-title-group">
+            <!-- Capsule Eyebrow Badge -->
+            <span id="hero-eyebrow" class="hero-eyebrow">
+              <span class="capsule-sparkle" aria-hidden="true">✦</span>
+              <span class="capsule-text">AI-powered technology. Built for growth.</span>
+            </span>
+
+            <!-- Main Display Headline -->
+            <h1 id="hero-heading" class="hero-heading">
+              We Build <span class="hero-headline-highlight">Intelligent</span><br class="hero-br" /> Digital Experiences.
+            </h1>
+
+            <!-- Editorial Sub-headline -->
+            <p id="hero-subheading" class="hero-subheading">
+              AI solutions, automations, applications, and websites designed to help businesses work smarter, connect better, and grow faster.
+            </p>
+          </div>
+
+          <!-- Award-Winning Hero CTA Actions Panel -->
+          <div id="hero-cta-panel" class="hero-cta-panel">
+            <!-- Primary CTA: Start a Project -->
+            <a
+              href="#contact"
+              class="hero-cta-btn hero-cta-primary"
+              data-contact-trigger
+              aria-label="Start a Project - Open contact inquiry modal"
+            >
+              <span class="hero-cta-text">Start a Project</span>
+            </a>
+
+            <!-- Secondary CTA: Explore What We Build -->
+            <a
+              href="#work"
+              class="hero-cta-btn hero-cta-secondary"
+              aria-label="Explore What We Build - View showcase"
+            >
+              <span class="hero-cta-text">Explore What We Build</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Right Side: Interactive Animated "Scroll To See" Indicator -->
+        <div id="hero-scroll-indicator" class="hero-scroll-indicator" aria-label="Scroll to see">
+          <div class="scroll-mouse-pill" aria-hidden="true">
+            <span class="scroll-wheel-track"></span>
+          </div>
+          <div class="scroll-label-wrap">
+            <span class="scroll-text">Scroll To See</span>
+            <svg class="scroll-chevron" width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+              <path d="M2.5 4.5L6 8L9.5 4.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+        </div>
+      </section>
+      <!-- ==================== UNIFIED CIRCULAR MENU DRAWER (Pixel-Perfect Reference Match) ==================== -->
+      <div id="desktopMenuWrap" class="menu-wrapper invisible" style="display:none;" aria-hidden="true">
+        <div class="menu-backdrop" id="desktopMenuBackdrop"></div>
+        <div
+          id="desktopMenuRef"
+          class="menu-block"
+          style="clip-path:circle(0% at 95% 5%);opacity:0;visibility:hidden"
+        >
+          <button
+            type="button"
+            id="desktopMenuCloseBtn"
+            aria-label="Close menu"
+            class="menu-close-btn"
+          >
+            <svg viewBox="0 0 24 24" width="13" height="13">
+              <path d="M4 4 L20 20 M20 4 L4 20" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path>
+            </svg>
+          </button>
+
+          <div class="desktop-menu-inner">
+            <div class="desktop-menu-top">
+              <ul class="menu-items-list">
+                <li class="menu-item">
+                  <a class="menu-link" href="#work">
+                    <span class="menu-link-text">Work</span>
+                    <svg class="menu-link-arrow" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                      <path d="M4 12L12 4M12 4H6M12 4V10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </a>
+                </li>
+                <li class="menu-item">
+                  <a class="menu-link" href="#services">
+                    <span class="menu-link-text">Services</span>
+                    <svg class="menu-link-arrow" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                      <path d="M4 12L12 4M12 4H6M12 4V10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </a>
+                </li>
+                <li class="menu-item">
+                  <a class="menu-link" href="#about">
+                    <span class="menu-link-text">About</span>
+                    <svg class="menu-link-arrow" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                      <path d="M4 12L12 4M12 4H6M12 4V10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </a>
+                </li>
+                <li class="menu-item">
+                  <a class="menu-link" href="#contact">
+                    <span class="menu-link-text">Contact</span>
+                    <svg class="menu-link-arrow" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                      <path d="M4 12L12 4M12 4H6M12 4V10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </a>
+                </li>
+              </ul>
+
+              <div class="story-link-wrap">
+                <a class="story-pill-link" href="#story">
+                  <span class="story-star">✦</span>
+                  <span class="story-text">The Trionn Name Story</span>
+                </a>
+              </div>
+            </div>
+
+            <div class="desktop-menu-bottom">
+              <div class="footer-enquiry">
+                <span class="footer-label">BUSINESS ENQUIRY</span>
+                <div class="footer-contacts">
+                  <p class="enquiry-row">
+                    <span class="contact-prefix">E.</span>
+                    <a class="contact-val" href="mailto:hello@trionn.com">
+                      <span class="val-text">hello@trionn.com</span>
+                    </a>
+                  </p>
+                  <p class="enquiry-row">
+                    <span class="contact-prefix">P.</span>
+                    <a class="contact-val" href="tel:+919824182099">
+                      <span class="val-text">+91 9824182099</span>
+                    </a>
+                  </p>
+                </div>
+              </div>
+
+              <div class="footer-social">
+                <span class="footer-label">SOCIAL</span>
+                <div class="social-grid">
+                  <div class="social-col">
+                    <p><a class="social-link" target="_blank" rel="noopener" href="https://linkedin.com"><span class="social-text">Linkedin</span></a></p>
+                    <p><a class="social-link" target="_blank" rel="noopener" href="https://dribbble.com"><span class="social-text">Dribbble</span></a></p>
+                  </div>
+                  <div class="social-col">
+                    <p><a class="social-link" target="_blank" rel="noopener" href="https://facebook.com"><span class="social-text">Facebook</span></a></p>
+                    <p><a class="social-link" target="_blank" rel="noopener" href="https://instagram.com"><span class="social-text">Instagram</span></a></p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== CONTACT POPUP MODAL ==================== -->
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-label="Contact DENZO"
+        class="contact-popup-wrapper invisible"
+        id="contactPopupWrapper"
+        style="display:none;opacity:0;pointer-events:none"
+      >
+        <div class="contact-popup-backdrop" id="contactPopupBackdrop"></div>
+
+        <div
+          id="contactPopupPanel"
+          class="contact-popup-panel"
+          style="clip-path:circle(0% at 95% 5%);opacity:0;visibility:hidden"
+        >
+          <button
+            type="button"
+            id="contactCloseBtn"
+            aria-label="Close contact form"
+            class="contact-close-btn"
+          >
+            <svg viewBox="0 0 24 24" width="12" height="12">
+              <path d="M4 4 L20 20 M20 4 L4 20" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path>
+            </svg>
+          </button>
+
+          <div class="contact-popup-inner">
+            <div class="contact-form-section">
+              <div class="contact-header-block stagger-item">
+                <h2 class="contact-h2">Let's build something great.</h2>
+                <p class="contact-sub">Tell us about your project, we usually reply within one business day.</p>
+              </div>
+
+              <form class="contact-form stagger-item" id="inquiry-form" onsubmit="event.preventDefault();">
+                <input
+                  type="text"
+                  placeholder="Full Name *"
+                  required
+                  aria-label="Full Name *"
+                  class="form-input"
+                />
+                <input
+                  type="email"
+                  placeholder="Email address *"
+                  required
+                  aria-label="Email Address *"
+                  class="form-input"
+                />
+                <input
+                  type="text"
+                  placeholder="Company / Website name"
+                  aria-label="Company / Website"
+                  class="form-input"
+                />
+
+                <!-- Custom Service Dropdown -->
+                <div class="custom-select-box relative">
+                  <button
+                    type="button"
+                    aria-haspopup="listbox"
+                    aria-expanded="false"
+                    class="select-trigger"
+                  >
+                    <span class="select-val is-placeholder">Select a service</span>
+                    <svg width="9" height="10" viewBox="0 0 9 10" fill="none" class="select-arrow">
+                      <path d="M0 5.47422L2.1 5.47422L4.9 8.33022L3.752 8.33022L6.552 5.47422H8.652L4.816 9.32422L3.836 9.32422L0 5.47422ZM3.542 0.000218391H5.11V8.61022L3.542 8.61022L3.542 0.000218391Z" fill="currentColor"></path>
+                    </svg>
+                  </button>
+                  <div role="listbox" class="select-dropdown invisible opacity-0 -translate-y-2 pointer-events-none">
+                    <button type="button" role="option" class="select-option">Website Design & Development</button>
+                    <button type="button" role="option" class="select-option">UI/UX & Interactive Design</button>
+                    <button type="button" role="option" class="select-option">Full-Stack Web Development</button>
+                    <button type="button" role="option" class="select-option">Mobile Application Design</button>
+                    <button type="button" role="option" class="select-option">Branding & Motion Identity</button>
+                    <button type="button" role="option" class="select-option">AI-Powered Digital Experience</button>
+                  </div>
+                </div>
+
+                <textarea
+                  rows="4"
+                  placeholder="Share a little about your goals, timeline, and requirements..."
+                  class="form-textarea"
+                ></textarea>
+
+                <!-- Custom Budget Dropdown -->
+                <div class="custom-select-box relative">
+                  <button
+                    type="button"
+                    aria-haspopup="listbox"
+                    aria-expanded="false"
+                    class="select-trigger"
+                  >
+                    <span class="select-val is-placeholder">Select your estimated budget</span>
+                    <svg width="9" height="10" viewBox="0 0 9 10" fill="none" class="select-arrow">
+                      <path d="M0 5.47422L2.1 5.47422L4.9 8.33022L3.752 8.33022L6.552 5.47422H8.652L4.816 9.32422L3.836 9.32422L0 5.47422ZM3.542 0.000218391H5.11V8.61022L3.542 8.61022L3.542 0.000218391Z" fill="currentColor"></path>
+                    </svg>
+                  </button>
+                  <div role="listbox" class="select-dropdown invisible opacity-0 -translate-y-2 pointer-events-none">
+                    <button type="button" role="option" class="select-option">Under $5K</button>
+                    <button type="button" role="option" class="select-option">$5K - $15K</button>
+                    <button type="button" role="option" class="select-option">$15K - $30K</button>
+                    <button type="button" role="option" class="select-option">$30K - $60K</button>
+                    <button type="button" role="option" class="select-option">$60K+</button>
+                    <button type="button" role="option" class="select-option">Not sure yet</button>
+                  </div>
+                </div>
+
+                <button type="submit" class="form-submit-btn">
+                  Send Inquiry
+                </button>
+                <div class="form-success-banner" style="display:none;">
+                  ✓ Thank you! Your inquiry has been sent. We'll reply within 24 hours.
+                </div>
+              </form>
+            </div>
+
+            <div class="contact-footer-section stagger-item">
+              <a
+                target="_blank"
+                rel="noopener noreferrer"
+                class="book-call-btn"
+                href="https://calendly.com"
+              >
+                Book a 30-Minute Call
+              </a>
+              <p class="contact-footer-note">Prefer email? <a class="footer-email-link" href="mailto:hello@denzo.studio">hello@denzo.studio</a></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- ==================== AI STATEMENT SECTION (Scroll Reveal Editorial Section) ==================== -->
+    <section
+      id="ai-statement-section"
+      class="ai-statement-section"
+      aria-label="AI is where we start"
+    >
+      <div class="ai-statement-container">
+        <!-- Brand Capsule -->
+        <div class="ai-capsule-wrap">
+          <span
+            id="ai-start-capsule"
+            class="ai-start-capsule text-xs tracking-wider font-semibold text-black px-4 py-2.5 rounded-full inline-flex items-center gap-1.5 select-none"
+          >
+            <span class="ai-start-capsule-dot w-1.5 h-1.5 rounded-full shrink-0" aria-hidden="true"></span>
+            <span>AI is where we start.</span>
+          </span>
+        </div>
+
+        <!-- On-Screen Editorial Text with Inline Rounded Cinematic Images -->
+        <h2 id="ai-statement-text" class="ai-statement-text">
+          <span class="ai-word-chunk">We use</span>
+          <span class="inline-media-pill ai-reveal-media" aria-hidden="true">
+            <img
+              src="https://raw.githubusercontent.com/codeovik/Denzo-files/refs/heads/main/robot.jpg"
+              alt="AI Robotics"
+              class="inline-media-img"
+              loading="eager"
+            />
+          </span>
+          <span class="ai-word-chunk ai-brand-highlight">artificial intelligence</span>
+          <span class="ai-word-chunk">to build smarter systems,</span>
+          <span class="inline-media-pill ai-reveal-media" aria-hidden="true">
+            <img
+              src="https://raw.githubusercontent.com/codeovik/Denzo-files/refs/heads/main/automation.jpg"
+              alt="Intelligent Automation"
+              class="inline-media-img"
+              loading="eager"
+            />
+          </span>
+          <span class="ai-word-chunk">automate processes, create better</span>
+          <span class="inline-media-pill ai-reveal-media" aria-hidden="true">
+            <img
+              src="https://raw.githubusercontent.com/codeovik/Denzo-files/refs/heads/main/vr.jpg"
+              alt="Immersive Customer Experiences"
+              class="inline-media-img"
+              loading="eager"
+            />
+          </span>
+          <span class="ai-word-chunk">customer experiences, and unlock new ways for</span>
+          <span class="ai-word-chunk ai-brand-highlight">businesses to grow.</span>
+        </h2>
+
+        <!-- Primary CTA Button at End of Section -->
+        <div id="ai-statement-cta" class="ai-cta-wrap">
+          <a
+            href="#contact"
+            class="hero-cta-btn hero-cta-primary ai-statement-cta-btn"
+            data-contact-trigger
+            aria-label="Start a Project - Open contact inquiry modal"
+          >
+            <span class="hero-cta-text">Start a Project</span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== ONE STUDIO SERVICES SECTION (GSAP Pinned Stack & Scroll Reveal) ==================== -->
+    <section
+      id="services-section"
+      class="services-stack-section"
+      aria-label="One Studio Services"
+    >
+      <!-- Section Header: Capsule + Capitalized Title with Recoleta Italic Brand Word -->
+      <div id="services-header-stage" class="services-header-stage">
+        <div class="services-header-inner">
+          <div class="ai-capsule-wrap">
+            <span
+              id="one-studio-capsule"
+              class="ai-start-capsule text-xs tracking-wider font-semibold text-black px-4 py-2.5 rounded-full inline-flex items-center gap-1.5 select-none"
+            >
+              <span class="ai-start-capsule-dot w-1.5 h-1.5 rounded-full shrink-0" aria-hidden="true"></span>
+              <span>One Studio</span>
+            </span>
+          </div>
+
+          <h2 id="services-main-title" class="services-main-title">
+            <span class="services-title-word">Intelligence</span>
+            <span class="services-title-word">Built</span>
+            <span class="services-title-word">Into</span>
+            <span class="services-title-word services-title-recoleta">Everything</span>
+          </h2>
+        </div>
+      </div>
+
+      <!-- Full-Width GSAP Pinned Card Stack -->
+      <div class="services-stack" id="services-stack">
+        <!-- Card 001: AI Solutions (Pure White) -->
+        <article class="service-stack-card card-theme-white" data-color="#2E5FFF">
+          <div class="service-card-inner">
+            <div class="dim-overlay"></div>
+            <div class="service-card-content">
+              <div class="service-card-num">{ 01 }</div>
+              <h3 class="service-card-title">AI Solutions</h3>
+              <p class="service-card-lead">Turn AI into real business value.</p>
+              <p class="service-card-desc">
+                We build custom AI solutions that understand information, assist teams, interact with customers, analyze data, and take action.
+              </p>
+              <div class="service-card-statements">
+                <span class="service-statement-line">Not AI for show.</span>
+                <span class="service-statement-sep" aria-hidden="true">·</span>
+                <span class="service-statement-line service-statement-accent">AI built to work.</span>
+              </div>
+              <div class="service-card-action">
+                <a
+                  href="#contact"
+                  class="hero-cta-btn hero-cta-primary service-explore-btn"
+                  data-contact-trigger
+                  aria-label="Explore AI Solutions"
+                >
+                  <span class="hero-cta-text">Explore AI Solutions</span>
+                </a>
+              </div>
+            </div>
+
+            <div class="service-card-visual" aria-hidden="true">
+              <img
+                src="https://raw.githubusercontent.com/codeovik/Denzo-files/refs/heads/main/brain.png"
+                alt="AI Solutions"
+                class="service-card-img"
+                loading="eager"
+              />
+            </div>
+          </div>
+        </article>
+
+        <!-- Card 002: Automation (Light Blue) -->
+        <article class="service-stack-card card-theme-lightblue" data-color="#2E5FFF">
+          <div class="service-card-inner">
+            <div class="dim-overlay"></div>
+            <div class="service-card-content">
+              <div class="service-card-num">{ 02 }</div>
+              <h3 class="service-card-title">Automation</h3>
+              <p class="service-card-lead">Make your business move on its own.</p>
+              <p class="service-card-desc">
+                We combine AI, automation, and integrations to eliminate repetitive work and connect the tools your business already uses.
+              </p>
+              <div class="service-card-statements">
+                <span class="service-statement-line">Less manual work.</span>
+                <span class="service-statement-sep" aria-hidden="true">·</span>
+                <span class="service-statement-line">Faster processes.</span>
+                <span class="service-statement-sep" aria-hidden="true">·</span>
+                <span class="service-statement-line service-statement-accent">More room to grow.</span>
+              </div>
+              <div class="service-card-action">
+                <a
+                  href="#contact"
+                  class="hero-cta-btn hero-cta-primary service-explore-btn"
+                  data-contact-trigger
+                  aria-label="Explore Automation"
+                >
+                  <span class="hero-cta-text">Explore Automation</span>
+                </a>
+              </div>
+            </div>
+
+            <div class="service-card-visual" aria-hidden="true">
+              <img
+                src="https://raw.githubusercontent.com/codeovik/Denzo-files/refs/heads/main/robot-hand.png"
+                alt="Automation"
+                class="service-card-img"
+                loading="eager"
+              />
+            </div>
+          </div>
+        </article>
+
+        <!-- Card 003: Applications (Pure White) -->
+        <article class="service-stack-card card-theme-white" data-color="#2E5FFF">
+          <div class="service-card-inner">
+            <div class="dim-overlay"></div>
+            <div class="service-card-content">
+              <div class="service-card-num">{ 03 }</div>
+              <h3 class="service-card-title">Applications</h3>
+              <p class="service-card-lead">Build smarter products.</p>
+              <p class="service-card-desc">
+                From internal platforms to customer-facing applications, we create intelligent digital products designed around your business, your users, and your goals.
+              </p>
+              <div class="service-card-statements">
+                <span class="service-statement-line">Web apps.</span>
+                <span class="service-statement-sep" aria-hidden="true">·</span>
+                <span class="service-statement-line">Mobile apps.</span>
+                <span class="service-statement-sep" aria-hidden="true">·</span>
+                <span class="service-statement-line">SaaS platforms.</span>
+                <span class="service-statement-sep" aria-hidden="true">·</span>
+                <span class="service-statement-line service-statement-accent">AI-powered tools.</span>
+              </div>
+              <div class="service-card-action">
+                <a
+                  href="#contact"
+                  class="hero-cta-btn hero-cta-primary service-explore-btn"
+                  data-contact-trigger
+                  aria-label="Explore Applications"
+                >
+                  <span class="hero-cta-text">Explore Applications</span>
+                </a>
+              </div>
+            </div>
+
+            <div class="service-card-visual" aria-hidden="true">
+              <img
+                src="https://raw.githubusercontent.com/codeovik/Denzo-files/refs/heads/main/app-development.png"
+                alt="Applications"
+                class="service-card-img"
+                loading="eager"
+              />
+            </div>
+          </div>
+        </article>
+
+        <!-- Card 004: Websites (Light Blue) -->
+        <article class="service-stack-card card-theme-lightblue" data-color="#2E5FFF">
+          <div class="service-card-inner">
+            <div class="dim-overlay"></div>
+            <div class="service-card-content">
+              <div class="service-card-num">{ 04 }</div>
+              <h3 class="service-card-title">Websites</h3>
+              <p class="service-card-lead">Websites that do more.</p>
+              <p class="service-card-desc">
+                We build digital experiences that go beyond looking good. They can understand visitors, answer questions, recommend solutions, capture opportunities, connect systems, and automate actions.
+              </p>
+              <div class="service-card-statements">
+                <span class="service-statement-line service-statement-accent">Your website becomes part of your business.</span>
+              </div>
+              <div class="service-card-action">
+                <a
+                  href="#contact"
+                  class="hero-cta-btn hero-cta-primary service-explore-btn"
+                  data-contact-trigger
+                  aria-label="Explore Web Development"
+                >
+                  <span class="hero-cta-text">Explore Web Development</span>
+                </a>
+              </div>
+            </div>
+
+            <div class="service-card-visual" aria-hidden="true">
+              <img
+                src="https://raw.githubusercontent.com/codeovik/Denzo-files/refs/heads/main/web-development.png"
+                alt="Websites"
+                class="service-card-img"
+                loading="eager"
+              />
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- ==================== AI SOLUTIONS HORIZONTAL SCROLL PIN SECTION ==================== -->
+    <section
+      id="ai-solutions-pin-section"
+      class="ai-solutions-pin-section"
+      aria-labelledby="ai-solutions-pin-title"
+    >
+      <div class="ai-solutions-pin-wrap" id="aiSolutionsPinWrap">
+        <div class="ai-solutions-pin-track" id="aiSolutionsPinTrack">
+          <!-- Left Intro / Headline Panel (Scrolls Horizontally with the Cards) -->
+          <div class="ai-solutions-intro-panel">
+            <div class="ai-solutions-intro-inner">
+              <div class="ai-capsule-wrap">
+                <span
+                  id="ai-solutions-capsule"
+                  class="ai-start-capsule text-xs tracking-wider font-semibold text-black px-4 py-2.5 rounded-full inline-flex items-center gap-1.5 select-none"
+                >
+                  <span class="ai-start-capsule-dot w-1.5 h-1.5 rounded-full shrink-0" aria-hidden="true"></span>
+                  <span>AI SOLUTIONS</span>
+                </span>
+              </div>
+
+              <h2 id="ai-solutions-pin-title" class="ai-solutions-pin-title">
+                What if your business could <span class="services-title-recoleta">think?</span>
+              </h2>
+
+              <p id="ai-solutions-pin-sub" class="ai-solutions-pin-sub">
+                At DENZO, we turn artificial intelligence into practical tools built around how your business actually works. Imagine your business with:
+              </p>
+
+              <div class="ai-solutions-intro-footer">
+                <a
+                  href="#contact"
+                  class="hero-cta-btn hero-cta-primary ai-solutions-primary-btn"
+                  data-contact-trigger
+                  aria-label="Explore AI Solutions - Open contact inquiry modal"
+                >
+                  <span class="hero-cta-text">Explore AI Solutions</span>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Horizontal Cards Deck (6 Google-Labs-Style Tilted Cards) -->
+          <div class="ai-solutions-cards-rail">
+            <!-- Card 01 -->
+            <article class="ai-sol-card ai-sol-tilt-1" data-tilt="-3.2">
+              <div class="ai-sol-card-visual">
+                <img
+                  src="https://raw.githubusercontent.com/codeovik/Denzo-files/refs/heads/main/ai-assistant.jpg"
+                  alt="An AI assistant that knows your company"
+                  class="ai-sol-card-img"
+                  loading="lazy"
+                />
+              </div>
+
+              <div class="ai-sol-card-body">
+                <h3 class="ai-sol-card-title">An AI assistant that knows your company.</h3>
+                <p class="ai-sol-card-desc">
+                  Trained on your internal playbooks, and knowledge base to deliver instant answers across every department.
+                </p>
+                <a href="#contact" class="ai-sol-card-link" data-contact-trigger>
+                  <span>Learn More</span>
+                  <span class="ai-sol-link-arrow" aria-hidden="true">
+                    <svg class="ai-sol-arrow-svg" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M3 8H13M13 8L8.5 3.5M13 8L8.5 12.5" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                  </span>
+                </a>
+              </div>
+            </article>
+
+            <!-- Card 02 -->
+            <article class="ai-sol-card ai-sol-tilt-2" data-tilt="0.5">
+              <div class="ai-sol-card-visual">
+                <img
+                  src="https://raw.githubusercontent.com/codeovik/Denzo-files/refs/heads/main/customer.jpg"
+                  alt="Customer experiences available 24/7"
+                  class="ai-sol-card-img"
+                  loading="lazy"
+                />
+              </div>
+
+              <div class="ai-sol-card-body">
+                <h3 class="ai-sol-card-title">Customer experiences available 24/7.</h3>
+                <p class="ai-sol-card-desc">
+                  Intelligent conversational agents that resolve inquiries, qualify leads, and guide customers around the clock with zero wait time.
+                </p>
+                <a href="#contact" class="ai-sol-card-link" data-contact-trigger>
+                  <span>Try It Now</span>
+                  <span class="ai-sol-link-arrow" aria-hidden="true">
+                    <svg class="ai-sol-arrow-svg" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M3 8H13M13 8L8.5 3.5M13 8L8.5 12.5" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                  </span>
+                </a>
+              </div>
+            </article>
+
+            <!-- Card 03 -->
+            <article class="ai-sol-card ai-sol-tilt-3" data-tilt="3.2">
+              <div class="ai-sol-card-visual">
+                <img
+                  src="https://raw.githubusercontent.com/codeovik/Denzo-files/refs/heads/main/team.jpg"
+                  alt="Teams supported by intelligent tools"
+                  class="ai-sol-card-img"
+                  loading="lazy"
+                />
+              </div>
+
+              <div class="ai-sol-card-body">
+                <h3 class="ai-sol-card-title">Teams supported by intelligent tools.</h3>
+                <p class="ai-sol-card-desc">
+                  Custom co-pilots built into your daily workspace that draft proposals, synthesize research, and multiply team output.
+                </p>
+                <a href="#contact" class="ai-sol-card-link" data-contact-trigger>
+                  <span>Explore Tools</span>
+                  <span class="ai-sol-link-arrow" aria-hidden="true">
+                    <svg class="ai-sol-arrow-svg" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M3 8H13M13 8L8.5 3.5M13 8L8.5 12.5" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                  </span>
+                </a>
+              </div>
+            </article>
+
+            <!-- Card 04 -->
+            <article class="ai-sol-card ai-sol-tilt-4" data-tilt="-2.5">
+              <div class="ai-sol-card-visual">
+                <img
+                  src="https://raw.githubusercontent.com/codeovik/Denzo-files/refs/heads/main/data.jpg"
+                  alt="Data transformed into answers"
+                  class="ai-sol-card-img"
+                  loading="lazy"
+                />
+              </div>
+
+              <div class="ai-sol-card-body">
+                <h3 class="ai-sol-card-title">Data transformed into answers.</h3>
+                <p class="ai-sol-card-desc">
+                  Query complex metrics in plain English and turn scattered databases, CRMs, and reports into immediate executive clarity.
+                </p>
+                <a href="#contact" class="ai-sol-card-link" data-contact-trigger>
+                  <span>Learn More</span>
+                  <span class="ai-sol-link-arrow" aria-hidden="true">
+                    <svg class="ai-sol-arrow-svg" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M3 8H13M13 8L8.5 3.5M13 8L8.5 12.5" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                  </span>
+                </a>
+              </div>
+            </article>
+
+            <!-- Card 05 -->
+            <article class="ai-sol-card ai-sol-tilt-5" data-tilt="1.8">
+              <div class="ai-sol-card-visual">
+                <img
+                  src="https://raw.githubusercontent.com/codeovik/Denzo-files/refs/heads/main/automatically.jpg"
+                  alt="Processes that run automatically"
+                  class="ai-sol-card-img"
+                  loading="lazy"
+                />
+              </div>
+
+              <div class="ai-sol-card-body">
+                <h3 class="ai-sol-card-title">Processes that run automatically.</h3>
+                <p class="ai-sol-card-desc">
+                  Self-driving operational pipelines that connect your software stack, route approvals, and eliminate manual bottlenecks.
+                </p>
+                <a href="#contact" class="ai-sol-card-link" data-contact-trigger>
+                  <span>Automate Now</span>
+                  <span class="ai-sol-link-arrow" aria-hidden="true">
+                    <svg class="ai-sol-arrow-svg" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M3 8H13M13 8L8.5 3.5M13 8L8.5 12.5" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                  </span>
+                </a>
+              </div>
+            </article>
+
+            <!-- Card 06 -->
+            <article class="ai-sol-card ai-sol-tilt-6" data-tilt="-2.8">
+              <div class="ai-sol-card-visual">
+                <img
+                  src="https://raw.githubusercontent.com/codeovik/Denzo-files/refs/heads/main/system.jpg"
+                  alt="Systems that learn from every interaction"
+                  class="ai-sol-card-img"
+                  loading="lazy"
+                />
+              </div>
+
+              <div class="ai-sol-card-body">
+                <h3 class="ai-sol-card-title">Systems that learn from every interaction.</h3>
+                <p class="ai-sol-card-desc">
+                  Adaptive intelligence loops that sharpen accuracy, personalize customer journeys, and compound performance over time.
+                </p>
+                <a href="#contact" class="ai-sol-card-link" data-contact-trigger>
+                  <span>Start Building</span>
+                  <span class="ai-sol-link-arrow" aria-hidden="true">
+                    <svg class="ai-sol-arrow-svg" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M3 8H13M13 8L8.5 3.5M13 8L8.5 12.5" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                  </span>
+                </a>
+              </div>
+            </article>
+          </div>
+
+          <!-- Right Outro / End Quote & Primary CTA Panel (Horizontal Scroll Finale) -->
+          <div class="ai-solutions-outro-panel" id="aiSolutionsOutroPanel">
+            <div class="ai-solutions-outro-inner">
+              <span class="ai-solutions-quote-mark" aria-hidden="true">“</span>
+
+              <blockquote class="ai-solutions-outro-quote">
+                The future belongs to businesses that don’t just use software — they build <span class="services-title-recoleta">intelligence</span> into everything they do.
+              </blockquote>
+
+              <p class="ai-solutions-outro-sub">
+                Let’s architect custom AI systems tailored to how your team operates and scales.
+              </p>
+
+              <div class="ai-solutions-outro-cta">
+                <a
+                  href="#contact"
+                  class="hero-cta-btn hero-cta-primary ai-solutions-primary-btn"
+                  data-contact-trigger
+                  aria-label="Start a Project - Open contact inquiry modal"
+                >
+                  <span class="hero-cta-text">Start a Project</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== WORK PROCESS GSAP SCROLL PIN SECTION ==================== -->
+    <section
+      id="work-process-section"
+      class="work-process-section"
+      aria-labelledby="work-process-main-title"
+    >
+      <!-- GSAP Pinned Full-Viewport Stage -->
+      <div class="work-process-pin-wrap" id="workProcessPinWrap">
+        <div class="work-process-shell">
+          <!-- Top-Left Header (Inside Pinned Stage like Reference) -->
+          <div id="work-process-header-stage" class="work-process-header-stage">
+            <div class="work-process-header-inner">
+              <div class="ai-capsule-wrap">
+                <span
+                  id="work-process-capsule"
+                  class="ai-start-capsule text-xs tracking-wider font-semibold text-black px-4 py-2.5 rounded-full inline-flex items-center gap-1.5 select-none"
+                >
+                  <span class="ai-start-capsule-dot w-1.5 h-1.5 rounded-full shrink-0" aria-hidden="true"></span>
+                  <span>HOW WE BUILD</span>
+                </span>
+              </div>
+
+              <h2 id="work-process-main-title" class="work-process-main-title">
+                <span class="wp-title-word">From</span>
+                <span class="wp-title-word">Idea</span>
+                <span class="wp-title-word">To</span>
+                <span class="wp-title-word services-title-recoleta">Intelligence.</span>
+              </h2>
+            </div>
+          </div>
+
+          <!-- Two-Column Content Grid: Left Steps Accordion + Right ~4:3 Image Stage -->
+          <div class="work-process-pin-container">
+            <!-- Left Column: Vertical Timeline Stick + Steps List -->
+            <div class="work-process-left" id="workProcessLeftViewport">
+              <!-- Left Vertical Hairline Stick with Traveling Glowing Dot (Reference Style) -->
+              <div class="wp-left-stick" aria-hidden="true">
+                <div class="wp-left-stick-line"></div>
+                <div class="wp-left-stick-trail" id="wpLeftStickTrail"></div>
+                <div class="wp-left-stick-dot" id="wpLeftStickDot"></div>
+              </div>
+
+              <div class="work-process-steps-track" id="workProcessStepsTrack">
+                <!-- Step 01 -->
+                <article class="wp-step-item is-active" data-step-index="0">
+                  <span class="wp-step-num">01</span>
+                  <h3 class="wp-step-title">Discover Your Business &amp; Vision</h3>
+                  <div class="wp-step-details">
+                    <div class="wp-step-details-inner">
+                      <p class="wp-step-desc">
+                        We understand your business, your customers, and the core challenge before writing a single line of code.
+                        <span class="wp-step-question">What are we solving?</span>
+                      </p>
+                    </div>
+                  </div>
+                </article>
+
+                <!-- Step 02 -->
+                <article class="wp-step-item" data-step-index="1">
+                  <span class="wp-step-num">02</span>
+                  <h3 class="wp-step-title">Design Experience &amp; Architecture</h3>
+                  <div class="wp-step-details">
+                    <div class="wp-step-details-inner">
+                      <p class="wp-step-desc">
+                        We create the user experience, system flows, interfaces, and technical architecture built for clarity.
+                        <span class="wp-step-question">How should it work?</span>
+                      </p>
+                    </div>
+                  </div>
+                </article>
+
+                <!-- Step 03 -->
+                <article class="wp-step-item" data-step-index="2">
+                  <span class="wp-step-num">03</span>
+                  <h3 class="wp-step-title">Build Real Production Technology</h3>
+                  <div class="wp-step-details">
+                    <div class="wp-step-details-inner">
+                      <p class="wp-step-desc">
+                        We turn the strategic concept into fast, resilient, production-grade software and digital products.
+                        <span class="wp-step-question">Make it real.</span>
+                      </p>
+                    </div>
+                  </div>
+                </article>
+
+                <!-- Step 04 -->
+                <article class="wp-step-item" data-step-index="3">
+                  <span class="wp-step-num">04</span>
+                  <h3 class="wp-step-title">Connect Systems, Data &amp; APIs</h3>
+                  <div class="wp-step-details">
+                    <div class="wp-step-details-inner">
+                      <p class="wp-step-desc">
+                        We integrate your existing platforms, databases, internal tools, and APIs into one unified ecosystem.
+                        <span class="wp-step-question">Make it work together.</span>
+                      </p>
+                    </div>
+                  </div>
+                </article>
+
+                <!-- Step 05 -->
+                <article class="wp-step-item" data-step-index="4">
+                  <span class="wp-step-num">05</span>
+                  <h3 class="wp-step-title">Introduce AI &amp; Smart Automation</h3>
+                  <div class="wp-step-details">
+                    <div class="wp-step-details-inner">
+                      <p class="wp-step-desc">
+                        We embed custom AI agents and autonomous workflows exactly where they create the highest leverage.
+                        <span class="wp-step-question">Make it smarter.</span>
+                      </p>
+                    </div>
+                  </div>
+                </article>
+
+                <!-- Step 06 -->
+                <article class="wp-step-item" data-step-index="5">
+                  <span class="wp-step-num">06</span>
+                  <h3 class="wp-step-title">Evolve, Optimize &amp; Scale Forward</h3>
+                  <div class="wp-step-details">
+                    <div class="wp-step-details-inner">
+                      <p class="wp-step-desc">
+                        We continuously refine models, monitor performance, and expand capabilities as your business grows.
+                        <span class="wp-step-question">Keep moving forward.</span>
+                      </p>
+                    </div>
+                  </div>
+                </article>
+              </div>
+            </div>
+
+            <!-- Right Column: ~4:3 Image Stage -->
+            <div class="work-process-right">
+              <div class="wp-visual-stage" id="workProcessVisualStage">
+                <!-- Step 01 Image Layer -->
+                <figure class="wp-visual-card is-active" data-visual-index="0">
+                  <div class="wp-visual-img-wrap">
+                    <img
+                      src="https://raw.githubusercontent.com/codeovik/Denzo-files/refs/heads/main/discover.jpg"
+                      alt="01 — Discover Your Business & Vision"
+                      class="wp-visual-img"
+                      referrerpolicy="no-referrer"
+                    />
+                  </div>
+                </figure>
+
+                <!-- Step 02 Image Layer -->
+                <figure class="wp-visual-card" data-visual-index="1">
+                  <div class="wp-visual-img-wrap">
+                    <img
+                      src="https://raw.githubusercontent.com/codeovik/Denzo-files/refs/heads/main/design.webp"
+                      alt="02 — Design Experience & Architecture"
+                      class="wp-visual-img"
+                      referrerpolicy="no-referrer"
+                    />
+                  </div>
+                </figure>
+
+                <!-- Step 03 Image Layer -->
+                <figure class="wp-visual-card" data-visual-index="2">
+                  <div class="wp-visual-img-wrap">
+                    <img
+                      src="https://raw.githubusercontent.com/codeovik/Denzo-files/refs/heads/main/coding.jpg"
+                      alt="03 — Build Real Production Technology"
+                      class="wp-visual-img"
+                      referrerpolicy="no-referrer"
+                    />
+                  </div>
+                </figure>
+
+                <!-- Step 04 Image Layer -->
+                <figure class="wp-visual-card" data-visual-index="3">
+                  <div class="wp-visual-img-wrap">
+                    <img
+                      src="https://raw.githubusercontent.com/codeovik/Denzo-files/refs/heads/main/connect-system.jpg"
+                      alt="04 — Connect Systems, Data & APIs"
+                      class="wp-visual-img"
+                      referrerpolicy="no-referrer"
+                    />
+                  </div>
+                </figure>
+
+                <!-- Step 05 Image Layer -->
+                <figure class="wp-visual-card" data-visual-index="4">
+                  <div class="wp-visual-img-wrap">
+                    <img
+                      src="https://raw.githubusercontent.com/codeovik/Denzo-files/refs/heads/main/smart-automation.jpg"
+                      alt="05 — Introduce AI & Smart Automation"
+                      class="wp-visual-img"
+                      referrerpolicy="no-referrer"
+                    />
+                  </div>
+                </figure>
+
+                <!-- Step 06 Image Layer -->
+                <figure class="wp-visual-card" data-visual-index="5">
+                  <div class="wp-visual-img-wrap">
+                    <img
+                      src="https://raw.githubusercontent.com/codeovik/Denzo-files/refs/heads/main/grow.jpg"
+                      alt="06 — Evolve, Optimize & Scale Forward"
+                      class="wp-visual-img"
+                      referrerpolicy="no-referrer"
+                    />
+                  </div>
+                </figure>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== PROBLEM-FIRST GSAP PINNED SCROLLING LIST SECTION ==================== -->
+    <section
+      id="problem-first-section"
+      class="problem-first-section"
+      aria-labelledby="problem-first-lead"
+    >
+      <div class="problem-first-pin-wrap" id="problemFirstPinWrap">
+        <div class="problem-first-shell">
+          <!-- Left Column (Desktop): Synchronized Progress Rail + Pinned Statement + Center Baseline Accent Square -->
+          <div class="problem-first-left">
+            <div class="ai-exp-meta-bar pf-meta-bar" id="pfMetaBar">
+              <span class="ai-exp-counter-current" id="pfCounterCurrent">01</span>
+              <span class="ai-exp-counter-track" aria-hidden="true">
+                <span class="ai-exp-counter-fill" id="pfCounterFill"></span>
+              </span>
+              <span class="ai-exp-counter-total">06</span>
+            </div>
+            <h2 id="problem-first-lead" class="problem-first-lead">
+              We don’t start with AI. We start with the <span class="services-title-recoleta">problem.</span>
+            </h2>
+            <span class="problem-first-marker" id="problemFirstMarker" aria-hidden="true"></span>
+          </div>
+
+          <!-- Right Column: Vertical Scrolling List (Low Opacity -> 100% Opacity at Center Focal Line on Scroll) -->
+          <div class="problem-first-right" id="problemFirstRightViewport">
+            <ul class="problem-first-list-track" id="problemFirstListTrack">
+              <li class="pf-list-item is-active" data-pf-index="0">
+                <span class="pf-list-text">Understand the problem</span>
+              </li>
+              <li class="pf-list-item" data-pf-index="1">
+                <span class="pf-list-text">Design the solution</span>
+              </li>
+              <li class="pf-list-item" data-pf-index="2">
+                <span class="pf-list-text">Build what matters</span>
+              </li>
+              <li class="pf-list-item" data-pf-index="3">
+                <span class="pf-list-text">Connect the systems</span>
+              </li>
+              <li class="pf-list-item" data-pf-index="4">
+                <span class="pf-list-text">Automate the work</span>
+              </li>
+              <li class="pf-list-item" data-pf-index="5">
+                <span class="pf-list-text">Intelligent where it counts</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== AI EXPERIENCE GSAP PINNED ARCHITECTURAL LIST SECTION ==================== -->
+    <section
+      id="ai-experience-section"
+      class="ai-experience-section"
+      aria-labelledby="ai-experience-lead"
+    >
+      <div class="ai-experience-pin-wrap" id="aiExperiencePinWrap">
+        <div class="ai-experience-shell">
+          <!-- Ambient Radial Aura Following Active Experience Row -->
+          <div class="ai-exp-ambient-glow" id="aiExpAmbientGlow" aria-hidden="true"></div>
+
+          <!-- Left Column (Desktop): Pinned Headline + Synchronized Architectural Progress Rail -->
+          <div class="ai-experience-left">
+            <div class="ai-experience-left-inner">
+              <div class="ai-exp-meta-bar" id="aiExpMetaBar">
+                <span class="ai-exp-counter-current" id="aiExpCounterCurrent">01</span>
+                <span class="ai-exp-counter-track" aria-hidden="true">
+                  <span class="ai-exp-counter-fill" id="aiExpCounterFill"></span>
+                </span>
+                <span class="ai-exp-counter-total">06</span>
+              </div>
+
+              <h2 id="ai-experience-lead" class="ai-experience-lead">
+                What happens when AI becomes part of the <span class="services-title-recoleta">experience?</span>
+              </h2>
+            </div>
+          </div>
+
+          <!-- Right Column: Progressive Scroll-Revealing Architectural List + Gliding Astroid Marker -->
+          <div class="ai-experience-right" id="aiExperienceRightStage">
+            <div class="ai-experience-list-wrap" id="aiExperienceListWrap">
+              <!-- Gliding & Rotating 4-Cusped Astroid Shape Point Before Active List Item -->
+              <span class="ai-exp-astroid-marker" id="aiExpAstroidMarker" aria-hidden="true">
+                <svg class="ai-exp-astroid-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path
+                    d="M12 0C12 8.25 15.75 12 24 12C15.75 12 12 15.75 12 24C12 15.75 8.25 12 0 12C8.25 12 12 8.25 12 0Z"
+                    fill="currentColor"
+                  />
+                </svg>
+              </span>
+
+              <ul class="ai-experience-list-track" id="aiExperienceListTrack">
+                <li class="ai-exp-item is-active" data-exp-index="0">
+                  <div class="ai-exp-item-row">
+                    <span class="ai-exp-item-text">
+                      Your website <span class="ai-exp-item-accent">answers.</span>
+                    </span>
+                  </div>
+                </li>
+
+                <li class="ai-exp-item" data-exp-index="1">
+                  <div class="ai-exp-item-row">
+                    <span class="ai-exp-item-text">
+                      Your application <span class="ai-exp-item-accent">understands.</span>
+                    </span>
+                  </div>
+                </li>
+
+                <li class="ai-exp-item" data-exp-index="2">
+                  <div class="ai-exp-item-row">
+                    <span class="ai-exp-item-text">
+                      Your systems <span class="ai-exp-item-accent">connect.</span>
+                    </span>
+                  </div>
+                </li>
+
+                <li class="ai-exp-item" data-exp-index="3">
+                  <div class="ai-exp-item-row">
+                    <span class="ai-exp-item-text">
+                      Your workflows <span class="ai-exp-item-accent">automate.</span>
+                    </span>
+                  </div>
+                </li>
+
+                <li class="ai-exp-item" data-exp-index="4">
+                  <div class="ai-exp-item-row">
+                    <span class="ai-exp-item-text">
+                      Your data <span class="ai-exp-item-accent">becomes useful.</span>
+                    </span>
+                  </div>
+                </li>
+
+                <li class="ai-exp-item" data-exp-index="5">
+                  <div class="ai-exp-item-row">
+                    <span class="ai-exp-item-text">
+                      Your business <span class="ai-exp-item-accent">moves faster.</span>
+                    </span>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== ORBITAL CTA SECTION ==================== -->
+    <section
+      id="cta-section"
+      class="cta-orbital-section"
+      aria-labelledby="cta-main-title"
+    >
+      <div class="cta-orbital-stage">
+        <!-- 4 Concentric Brand-Colored Orbital Rings + Center Ambient Glow -->
+        <div class="cta-orbital-rings" aria-hidden="true">
+          <div class="cta-center-glow"></div>
+          <div class="cta-ring cta-ring-4"></div>
+          <div class="cta-ring cta-ring-3"></div>
+          <div class="cta-ring cta-ring-2"></div>
+          <div class="cta-ring cta-ring-1"></div>
+        </div>
+
+        <!-- Centered Content Stack: Capsule + Display Title + Subtitle + Primary Button -->
+        <div class="cta-orbital-content">
+          <div class="ai-capsule-wrap">
+            <span
+              id="cta-section-capsule"
+              class="ai-start-capsule text-xs tracking-wider font-semibold text-black px-4 py-2.5 rounded-full inline-flex items-center gap-1.5 select-none"
+            >
+              <span class="ai-start-capsule-dot w-1.5 h-1.5 rounded-full shrink-0" aria-hidden="true"></span>
+              <span>Get started</span>
+            </span>
+          </div>
+
+          <h2 id="cta-main-title" class="cta-main-title">
+            <span class="cta-title-line">
+              Ready to <span class="services-title-recoleta">transform</span>
+            </span>
+            <span class="cta-title-line">your business.</span>
+          </h2>
+
+          <p id="cta-subtitle" class="cta-subtitle">
+            Partner with DENZO Studios to launch custom AI solutions and<br class="cta-sub-br" />
+            intelligent digital products built for real growth.
+          </p>
+
+          <div id="cta-button-wrap" class="cta-button-wrap">
+            <a
+              href="#contact"
+              class="hero-cta-btn hero-cta-primary cta-orbital-btn"
+              data-contact-trigger
+              aria-label="Start a Project - Open contact inquiry modal"
+            >
+              <span class="hero-cta-text">Start a Project</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Pre-Footer Architectural Wordmark Section ("DENZO Studio") -->
+    <section
+      id="wordmark-section"
+      class="pre-footer-wordmark-section"
+      aria-label="DENZO Studio Wordmark"
+    >
+      <div class="pre-footer-wordmark-inner">
+        <div class="pre-footer-wordmark-track">
+          <h2 id="pre-footer-wordmark" class="pre-footer-wordmark-title">DENZO Studio</h2>
+        </div>
+      </div>
+    </section>
+
+    <!-- Site Footer Section -->
+    <footer id="site-footer" class="site-footer" aria-label="Site Footer">
+      <div class="site-footer-shell">
+        <div id="footer-card" class="site-footer-card">
+          <!-- Top Main Grid: Brand + Navigation Columns + CTA -->
+          <div class="footer-top-grid">
+            <!-- Left Column: Brand Logo, Wordmark, Tagline & CTA -->
+            <div class="footer-brand-col">
+              <a href="#stage" class="footer-brand-link" aria-label="DENZO STUDIOS Home">
+                <img
+                  src="https://raw.githubusercontent.com/codeovik/Denzo-files/refs/heads/main/logo.png"
+                  alt="DENZO STUDIOS"
+                  class="footer-brand-logo"
+                />
+              </a>
+
+              <p class="footer-brand-tagline">
+                Building custom AI systems, intelligent automation, and modern digital products.
+              </p>
+
+              <!-- Have something in mind? CTA Block -->
+              <div class="footer-cta-block">
+                <p class="footer-cta-label">Have something in mind?</p>
+                <a
+                  href="#contact"
+                  class="hero-cta-btn hero-cta-primary footer-build-btn"
+                  data-contact-trigger
+                  aria-label="Let's build it"
+                >
+                  <span class="hero-cta-text">Let's build it</span>
+                </a>
+              </div>
+            </div>
+
+            <!-- Right Columns: Solutions, Company, Connect -->
+            <div class="footer-nav-columns">
+              <!-- Column 1: Solutions -->
+              <div class="footer-nav-col">
+                <h3 class="footer-col-heading">Solutions</h3>
+                <ul class="footer-col-list">
+                  <li><a href="#services-section" class="footer-nav-link">AI Solutions</a></li>
+                  <li><a href="#services-section" class="footer-nav-link">Automation</a></li>
+                  <li><a href="#services-section" class="footer-nav-link">Applications</a></li>
+                  <li><a href="#services-section" class="footer-nav-link">Web Development</a></li>
+                  <li><a href="#services-section" class="footer-nav-link">Custom Technology</a></li>
+                </ul>
+              </div>
+
+              <!-- Column 2: Company -->
+              <div class="footer-nav-col">
+                <h3 class="footer-col-heading">Company</h3>
+                <ul class="footer-col-list">
+                  <li><a href="#services-section" class="footer-nav-link">Work</a></li>
+                  <li><a href="#ai-statement-section" class="footer-nav-link">About</a></li>
+                  <li><a href="#contact" class="footer-nav-link" data-contact-trigger>Careers</a></li>
+                  <li><a href="#contact" class="footer-nav-link" data-contact-trigger>Contact</a></li>
+                </ul>
+              </div>
+
+              <!-- Column 3: Connect -->
+              <div class="footer-nav-col">
+                <h3 class="footer-col-heading">Connect</h3>
+                <ul class="footer-col-list">
+                  <li>
+                    <a
+                      href="https://www.linkedin.com"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="footer-nav-link footer-social-link"
+                    >
+                      <span>LinkedIn</span>
+                    </a>
+                  </li>
+                  <li>
+                    <a
+                      href="https://www.instagram.com"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="footer-nav-link footer-social-link"
+                    >
+                      <span>Instagram</span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <!-- Horizontal Hairline Divider -->
+          <div class="footer-divider" aria-hidden="true"></div>
+
+          <!-- Bottom Bar: Copyright & Legal Links -->
+          <div class="footer-bottom-bar">
+            <p class="footer-copyright">© 2026 DENZO STUDIOS.</p>
+            <div class="footer-legal-links">
+              <a href="#privacy" class="footer-legal-link">Privacy Policy</a>
+              <a href="#terms" class="footer-legal-link">Terms &amp; Conditions</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Vanilla Javascript Logic -->
+    <script src="./script.js"></script>
+  </body>
+</html>
