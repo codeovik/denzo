@@ -4179,6 +4179,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // (Eliminates synchronous DOM layout reflows & offscreen tweens during preloader)
   // ==========================================================================
   function initBelowFoldSections() {
+    initHeroToAiStatementTransition();
     initAiStatementScrollReveal();
     initServicesContinuousExperience();
     initWorkProcessSection();
@@ -4187,6 +4188,144 @@ document.addEventListener('DOMContentLoaded', () => {
     initAiExperienceSection();
     initOrbitalCtaSection();
     initFooterScrollReveal();
+  }
+
+  // ==========================================================================
+  // Hero to "AI is where we start" Pinned Split Scroll Transition & Parallax
+  // ==========================================================================
+  function initHeroToAiStatementTransition() {
+    const stage = document.getElementById('stage');
+    const aiSection = document.getElementById('ai-statement-section');
+    if (!stage || !aiSection || typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return;
+
+    // Elements for multi-layer depth parallax on scroll
+    const textCol = stage.querySelector('.hero-text-col');
+    const heroHeading = document.getElementById('hero-heading');
+    const heroEyebrow = document.getElementById('hero-eyebrow');
+    const heroSubheading = document.getElementById('hero-subheading');
+    const heroCtaPanel = document.getElementById('hero-cta-panel');
+    const heroScrollIndicator = document.getElementById('hero-scroll-indicator');
+    const brandWrap = document.getElementById('hero-3d-brand-wrap');
+    const universeCanvas = document.getElementById('hero-universe-canvas');
+    const siteNav = document.getElementById('nav');
+
+    const isMobile = window.innerWidth < 768;
+    const textShift = isMobile ? -140 : -220;
+    const headingShift = isMobile ? -45 : -80;
+    const brandShift = isMobile ? -140 : -220;
+    const canvasShift = isMobile ? -45 : -80;
+
+    // Unified single ScrollTrigger: pins #stage and scrubs multi-plane parallax in perfect sync
+    const parallaxTl = gsap.timeline({
+      scrollTrigger: {
+        trigger: stage,
+        start: 'top top',
+        end: () => '+=' + window.innerHeight,
+        pin: true,
+        pinSpacing: false,
+        scrub: true,
+        anticipatePin: 1,
+        invalidateOnRefresh: true,
+      },
+    });
+
+    // 1. Entire Hero Text Column: lifts upward ahead of the rising bottom curtain
+    if (textCol) {
+      parallaxTl.fromTo(
+        textCol,
+        { y: 0, opacity: 1 },
+        { y: textShift, opacity: 0.15, ease: 'none', overwrite: 'auto' },
+        0
+      );
+    }
+
+    // 2. Headline: extra optical displacement and scale reduction for 3D depth
+    if (heroHeading) {
+      parallaxTl.fromTo(
+        heroHeading,
+        { y: 0, scale: 1 },
+        { y: headingShift, scale: 0.94, ease: 'none', overwrite: 'auto' },
+        0
+      );
+    }
+
+    // 3. Eyebrow Capsule: floats with subtle buoyancy
+    if (heroEyebrow) {
+      parallaxTl.fromTo(
+        heroEyebrow,
+        { y: 0 },
+        { y: isMobile ? -30 : -50, ease: 'none', overwrite: 'auto' },
+        0
+      );
+    }
+
+    // 4. Subheading: glides smoothly
+    if (heroSubheading) {
+      parallaxTl.fromTo(
+        heroSubheading,
+        { y: 0 },
+        { y: isMobile ? -25 : -40, ease: 'none', overwrite: 'auto' },
+        0
+      );
+    }
+
+    // 5. Action CTA Buttons: recedes softly
+    if (heroCtaPanel) {
+      parallaxTl.fromTo(
+        heroCtaPanel,
+        { y: 0, opacity: 1 },
+        { y: isMobile ? -20 : -35, opacity: 0.1, ease: 'none', overwrite: 'auto' },
+        0
+      );
+    }
+
+    // 6. Interactive 3D Brand Logo: floats upward and recedes into deep space
+    if (brandWrap) {
+      parallaxTl.fromTo(
+        brandWrap,
+        { xPercent: -50, yPercent: -50, y: 0, scale: 1, opacity: 1 },
+        {
+          xPercent: -50,
+          yPercent: -50,
+          y: brandShift,
+          scale: 0.85,
+          opacity: 0.25,
+          ease: 'none',
+          overwrite: 'auto',
+        },
+        0
+      );
+    }
+
+    // 7. WebGL 3D Background Universe: slow camera space drift
+    if (universeCanvas) {
+      parallaxTl.fromTo(
+        universeCanvas,
+        { y: 0, scale: 1, opacity: 1 },
+        { y: canvasShift, scale: 1.08, opacity: 0.5, ease: 'none', overwrite: 'auto' },
+        0
+      );
+    }
+
+    // 8. Navbar: gentle glide and soft fade
+    if (siteNav) {
+      parallaxTl.fromTo(
+        siteNav,
+        { y: 0, opacity: 1 },
+        { y: -30, opacity: 0.25, ease: 'none', overwrite: 'auto' },
+        0
+      );
+    }
+
+    // 9. "Scroll To See" Indicator: prompt fades out early as scroll commences
+    if (heroScrollIndicator) {
+      parallaxTl.fromTo(
+        heroScrollIndicator,
+        { opacity: 1, y: 0 },
+        { opacity: 0, y: 24, duration: 0.25, ease: 'power1.out', overwrite: 'auto' },
+        0
+      );
+    }
   }
 
   // ==========================================================================
@@ -8563,32 +8702,30 @@ document.addEventListener('DOMContentLoaded', () => {
 
   /**
    * Orbital CTA Section ScrollTrigger Reveal (Line-by-Line Word Reveal like AI Statement Section)
+  /**
+   * Unified Video Background Stage & Clean Left-Aligned CTA Reveal
    */
   function initOrbitalCtaSection() {
     const ctaSection = document.getElementById('cta-section');
     if (!ctaSection) return;
 
-    const centerGlow = ctaSection.querySelector('.cta-center-glow');
-    const ring1 = ctaSection.querySelector('.cta-ring-1');
-    const ring2 = ctaSection.querySelector('.cta-ring-2');
-    const ring3 = ctaSection.querySelector('.cta-ring-3');
-    const ring4 = ctaSection.querySelector('.cta-ring-4');
-    const ringsOrdered = [ring1, ring2, ring3, ring4].filter(Boolean);
+    // Autoplay background loop video seamlessly
+    const bgVideo = document.getElementById('cta-footer-bg-video');
+    if (bgVideo) {
+      bgVideo.muted = true;
+      const playPromise = bgVideo.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(() => {});
+      }
+    }
 
-    const capsule = document.getElementById('cta-section-capsule');
     const titleEl = document.getElementById('cta-main-title');
     const subtitleEl = document.getElementById('cta-subtitle');
     const btnWrap = document.getElementById('cta-button-wrap');
 
-    // Continuous subtle counter-rotation on concentric rings
-    if (ring1) gsap.to(ring1, { rotation: 360, duration: 46, repeat: -1, ease: 'none' });
-    if (ring2) gsap.to(ring2, { rotation: -360, duration: 62, repeat: -1, ease: 'none' });
-    if (ring3) gsap.to(ring3, { rotation: 360, duration: 78, repeat: -1, ease: 'none' });
-    if (ring4) gsap.to(ring4, { rotation: -360, duration: 96, repeat: -1, ease: 'none' });
-
     if (typeof ScrollTrigger === 'undefined') return;
 
-    // Split text nodes into individual .cta-reveal-word spans while preserving child elements (e.g. .services-title-recoleta and <br>)
+    // Split text nodes into individual .cta-reveal-word spans while preserving child elements
     function wrapWordsInContainer(container) {
       if (!container) return [];
       const childNodes = Array.from(container.childNodes);
@@ -8630,7 +8767,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const subtitleWords = wrapWordsInContainer(subtitleEl);
     const allWords = [...titleWords, ...subtitleWords];
 
-    // Group words into visual lines by vertical center position (same algorithm as AI Statement Section)
+    // Group words into visual lines by vertical center position
     function groupIntoVisualLines(elements, threshold = 22) {
       const lines = [];
       let currentLine = [];
@@ -8665,102 +8802,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const titleVisualLines = groupIntoVisualLines(titleWords, 24);
       const subtitleVisualLines = groupIntoVisualLines(subtitleWords, 16);
 
-      // 0. Orbital Rings & Center Glow: Fade in and scale up one-by-one from inner ring outward on scroll
-      const ringTriggerEl = capsule || ctaSection.querySelector('.cta-orbital-content') || ctaSection;
-
-      if (centerGlow) {
-        gsap.set(centerGlow, {
-          opacity: 0,
-          scale: 0.32,
-          filter: 'blur(16px)',
-        });
-      }
-
-      ringsOrdered.forEach((ring) => {
-        gsap.set(ring, {
-          opacity: 0,
-          scale: 0.36,
-          filter: 'blur(10px)',
-        });
-      });
-
-      const ringsTl = gsap.timeline({
-        scrollTrigger: {
-          trigger: ringTriggerEl,
-          start: 'top 86%',
-          toggleActions: 'play none none reverse',
-        },
-      });
-
-      if (centerGlow) {
-        ringsTl.fromTo(
-          centerGlow,
-          { opacity: 0, scale: 0.32, filter: 'blur(16px)' },
-          {
-            opacity: 1,
-            scale: 1,
-            filter: 'blur(8px)',
-            duration: 1.15,
-            ease: 'power3.out',
-          },
-          0
-        );
-      }
-
-      // Animate Ring 1 -> Ring 2 -> Ring 3 -> Ring 4 one-by-one (fade + scale-up)
-      ringsOrdered.forEach((ring, idx) => {
-        ringsTl.fromTo(
-          ring,
-          {
-            opacity: 0,
-            scale: 0.36,
-            filter: 'blur(10px)',
-          },
-          {
-            opacity: 1,
-            scale: 1,
-            filter: 'blur(0px)',
-            duration: 1.1,
-            ease: 'power3.out',
-          },
-          0.12 + idx * 0.26
-        );
-      });
-
-      if (ringsTl.scrollTrigger) {
-        ctaLineTriggers.push(ringsTl.scrollTrigger);
-      }
-
-      // 1. Capsule reveal when capsule line enters viewport
-      if (capsule) {
-        gsap.set(capsule, {
-          opacity: 0,
-          y: 26,
-          filter: 'blur(10px)',
-        });
-
-        const capTl = gsap.timeline({
-          scrollTrigger: {
-            trigger: capsule,
-            start: 'top 88%',
-            toggleActions: 'play none none reverse',
-          },
-        });
-
-        capTl.to(capsule, {
-          opacity: 1,
-          y: 0,
-          filter: 'blur(0px)',
-          duration: 0.95,
-          ease: 'power3.out',
-        });
-
-        if (capTl.scrollTrigger) {
-          ctaLineTriggers.push(capTl.scrollTrigger);
-        }
-      }
-
-      // 2. Title lines: each visual line reveals its words one-by-one as you scroll to that line
+      // 1. Title lines: each visual line reveals its words one-by-one as you scroll to that line
       titleVisualLines.forEach((lineItems) => {
         gsap.set(lineItems, {
           opacity: 0,
@@ -8790,7 +8832,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       });
 
-      // 3. Subtitle lines: each visual line reveals its words one-by-one as you scroll to that line
+      // 2. Subtitle lines: each visual line reveals its words one-by-one as you scroll to that line
       subtitleVisualLines.forEach((lineItems) => {
         gsap.set(lineItems, {
           opacity: 0,
@@ -8820,11 +8862,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       });
 
-      // 4. Primary CTA Button reveal when scrolling down to the button
+      // 3. Left-Aligned Primary Action Button reveal
       if (btnWrap) {
         gsap.set(btnWrap, {
           opacity: 0,
-          y: 28,
+          y: 26,
           filter: 'blur(10px)',
         });
 
@@ -8878,43 +8920,51 @@ document.addEventListener('DOMContentLoaded', () => {
     const wordmarkTitle = document.getElementById('pre-footer-wordmark');
 
     if (wordmarkSection && wordmarkTitle) {
-      let wordTargets = [];
+      const isWordmarkHidden =
+        wordmarkTitle.style.display === 'none' ||
+        wordmarkSection.style.display === 'none' ||
+        window.getComputedStyle(wordmarkTitle).display === 'none' ||
+        window.getComputedStyle(wordmarkSection).display === 'none';
 
-      if (typeof SplitText !== 'undefined') {
-        const splitWordmark = new SplitText(wordmarkTitle, {
-          type: 'words',
-          wordsClass: 'wordmark-word',
-        });
-        wordTargets = splitWordmark.words;
-      } else {
-        const rawWords = wordmarkTitle.textContent.trim().split(/\s+/);
-        wordmarkTitle.innerHTML = rawWords
-          .map((w) => `<span class="wordmark-word">${w}</span>`)
-          .join(' ');
-        wordTargets = wordmarkTitle.querySelectorAll('.wordmark-word');
-      }
+      if (!isWordmarkHidden) {
+        let wordTargets = [];
 
-      if (wordTargets.length > 0) {
-        gsap.set(wordTargets, {
-          opacity: 0,
-          y: 36,
-          filter: 'blur(12px)',
-        });
+        if (typeof SplitText !== 'undefined') {
+          const splitWordmark = new SplitText(wordmarkTitle, {
+            type: 'words',
+            wordsClass: 'wordmark-word',
+          });
+          wordTargets = splitWordmark.words;
+        } else {
+          const rawWords = wordmarkTitle.textContent.trim().split(/\s+/);
+          wordmarkTitle.innerHTML = rawWords
+            .map((w) => `<span class="wordmark-word">${w}</span>`)
+            .join(' ');
+          wordTargets = wordmarkTitle.querySelectorAll('.wordmark-word');
+        }
 
-        gsap.to(wordTargets, {
-          opacity: 1,
-          y: 0,
-          filter: 'blur(0px)',
-          duration: 1.15,
-          stagger: 0.14,
-          ease: 'power3.out',
-          scrollTrigger: {
-            trigger: wordmarkSection,
-            start: 'top 86%',
-            end: 'bottom 25%',
-            toggleActions: 'play none none reverse',
-          },
-        });
+        if (wordTargets.length > 0) {
+          gsap.set(wordTargets, {
+            opacity: 0,
+            y: 36,
+            filter: 'blur(12px)',
+          });
+
+          gsap.to(wordTargets, {
+            opacity: 1,
+            y: 0,
+            filter: 'blur(0px)',
+            duration: 1.15,
+            stagger: 0.14,
+            ease: 'power3.out',
+            scrollTrigger: {
+              trigger: wordmarkSection,
+              start: 'top 86%',
+              end: 'bottom 25%',
+              toggleActions: 'play none none reverse',
+            },
+          });
+        }
       }
     }
 
