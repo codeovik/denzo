@@ -1272,11 +1272,13 @@ main#stage:nth-of-type(1) > header#nav:nth-of-type(1) > div:nth-of-type(1) > div
    ========================================================================== */
 .hero-3d-brand-wrap {
   position: absolute;
-  top: 48%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: clamp(500px, 60vw, 860px);
-  height: clamp(500px, 60vw, 860px);
+  top: 0;
+  bottom: 2vh;
+  left: 0;
+  right: 0;
+  margin: auto;
+  width: clamp(380px, min(56vw, 75vh), 740px);
+  height: clamp(380px, min(56vw, 75vh), 740px);
   z-index: 22;
   display: flex;
   align-items: center;
@@ -1285,7 +1287,6 @@ main#stage:nth-of-type(1) > header#nav:nth-of-type(1) > div:nth-of-type(1) > div
   opacity: 0;
   visibility: hidden;
   will-change: transform, opacity;
-  transition: visibility 1.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .hero-3d-brand-canvas {
@@ -1298,33 +1299,33 @@ main#stage:nth-of-type(1) > header#nav:nth-of-type(1) > div:nth-of-type(1) > div
 
 @media (max-width: 1024px) {
   .hero-3d-brand-wrap {
-    top: 46%;
-    width: clamp(430px, 72vw, 680px);
-    height: clamp(430px, 72vw, 680px);
+    bottom: 4vh;
+    width: clamp(340px, min(64vw, 68vh), 620px);
+    height: clamp(340px, min(64vw, 68vh), 620px);
   }
 }
 
 @media (max-width: 768px) {
   .hero-3d-brand-wrap {
-    top: 40%;
-    width: clamp(360px, 84vw, 560px);
-    height: clamp(360px, 84vw, 560px);
+    bottom: 6vh;
+    width: clamp(300px, min(80vw, 58vh), 500px);
+    height: clamp(300px, min(80vw, 58vh), 500px);
   }
 }
 
 @media (max-width: 480px) {
   .hero-3d-brand-wrap {
-    top: 38%;
-    width: clamp(320px, 92vw, 460px);
-    height: clamp(320px, 92vw, 460px);
+    bottom: 8vh;
+    width: clamp(270px, min(88vw, 52vh), 420px);
+    height: clamp(270px, min(88vw, 52vh), 420px);
   }
 }
 
-@media (max-height: 700px) {
+@media (max-height: 650px) {
   .hero-3d-brand-wrap {
-    top: 40%;
-    width: clamp(280px, 60vh, 430px);
-    height: clamp(280px, 60vh, 430px);
+    bottom: 0;
+    width: clamp(260px, 66vh, 440px);
+    height: clamp(260px, 66vh, 440px);
   }
 }
 

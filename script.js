@@ -1126,12 +1126,11 @@ function clamp(val, min, max) {
     // 1. Scene & Depth Configuration
     scene = new THREE.Scene();
 
-    const rect = container.getBoundingClientRect();
-    const width = Math.max(rect.width || 360, 200);
-    const height = Math.max(rect.height || 360, 200);
+    const width = Math.max(container.clientWidth || container.offsetWidth || 380, 200);
+    const height = Math.max(container.clientHeight || container.offsetHeight || 380, 200);
 
     camera = new THREE.PerspectiveCamera(36, width / height, 0.1, 50);
-    camera.position.set(0, 0, 3.35);
+    camera.position.set(0, 0, 3.2);
 
     const isMobile = window.innerWidth < 768;
     const maxDpr = Math.min(window.devicePixelRatio || 1, isMobile ? 1.0 : 1.35);
@@ -1267,7 +1266,7 @@ function clamp(val, min, max) {
     const size = new THREE.Vector3();
     bbox.getSize(size);
     const maxDim = Math.max(size.x, size.y, size.z);
-    const targetDim = 2.05; // Generously framed sculptural presence
+    const targetDim = 2.12; // Bolder, larger sculptural presence
     const scale = targetDim / (maxDim || 1);
 
     // 4. Denzo Luxury Darker Blue Alloy Material
@@ -1280,6 +1279,8 @@ function clamp(val, min, max) {
     });
 
     targetMesh.material = logoMaterial;
+    targetMesh.position.set(0, 0, 0);
+    targetMesh.rotation.set(0, 0, 0);
     targetMesh.scale.set(scale, scale, scale);
 
     // Store reference and add to group
@@ -1287,8 +1288,15 @@ function clamp(val, min, max) {
     modelGroup.add(logoMesh);
     isModelLoaded = true;
 
-    // Pre-warm WebGL shader compilation in idle callback
+    // Synchronize camera and renderer to container dimensions
     try {
+      if (renderer && camera && container) {
+        const w = Math.max(container.clientWidth || container.offsetWidth || 380, 160);
+        const h = Math.max(container.clientHeight || container.offsetHeight || 380, 160);
+        camera.aspect = w / h;
+        camera.updateProjectionMatrix();
+        renderer.setSize(w, h, false);
+      }
       renderer.compile(scene, camera);
     } catch (_) {}
 
@@ -1331,9 +1339,8 @@ function clamp(val, min, max) {
   function setupObservers() {
     function handleResize() {
       if (!renderer || !camera || !container) return;
-      const rect = container.getBoundingClientRect();
-      const w = Math.max(rect.width || 360, 160);
-      const h = Math.max(rect.height || 360, 160);
+      const w = Math.max(container.clientWidth || container.offsetWidth || 380, 160);
+      const h = Math.max(container.clientHeight || container.offsetHeight || 380, 160);
 
       camera.aspect = w / h;
       camera.updateProjectionMatrix();
@@ -1345,6 +1352,11 @@ function clamp(val, min, max) {
     }
 
     window.addEventListener('resize', handleResize, { passive: true });
+
+    if ('ResizeObserver' in window && container) {
+      const ro = new ResizeObserver(() => handleResize());
+      ro.observe(container);
+    }
 
     // Performance Guard: Pause render loop when scrolled away from Hero stage
     if ('IntersectionObserver' in window) {
@@ -1414,14 +1426,23 @@ function clamp(val, min, max) {
     if (!container) container = document.getElementById('hero-3d-brand-wrap');
     if (!container) return;
 
+    if (renderer && camera) {
+      const w = Math.max(container.clientWidth || container.offsetWidth || 380, 160);
+      const h = Math.max(container.clientHeight || container.offsetHeight || 380, 160);
+      camera.aspect = w / h;
+      camera.updateProjectionMatrix();
+      const isMobile = window.innerWidth < 768;
+      const targetDpr = Math.min(window.devicePixelRatio || 1, isMobile ? 1.0 : 1.35);
+      renderer.setPixelRatio(targetDpr);
+      renderer.setSize(w, h, false);
+    }
+
     if (window.gsap) {
       window.gsap.to(container, {
         opacity: 1,
         visibility: 'visible',
-        scale: 1,
         duration: 1.2,
         ease: 'power2.out',
-        overwrite: 'auto',
       });
     } else {
       container.style.opacity = '1';
@@ -1438,7 +1459,6 @@ function clamp(val, min, max) {
       window.gsap.set(container, {
         opacity: 0,
         visibility: 'hidden',
-        scale: 0.95,
       });
     } else {
       container.style.opacity = '0';
@@ -1781,6 +1801,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function resetAllInitialStates() {
     window.DenzoHero3D?.hide?.();
+    const heroBrandWrap = document.getElementById('hero-3d-brand-wrap');
+    if (heroBrandWrap) {
+      gsap.set(heroBrandWrap, { x: 0, xPercent: 0, yPercent: 0, y: 0, scale: 1 });
+    }
     const wordmarkWrap = document.getElementById('denzo-genesis-wordmark-wrap');
     if (wordmarkWrap) {
       gsap.set(wordmarkWrap, {
@@ -4281,17 +4305,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 6. Interactive 3D Brand Logo: floats upward and recedes into deep space
     if (brandWrap) {
+      // Ensure horizontal centering remains pristine (centered by CSS layout)
+      gsap.set(brandWrap, { x: 0, xPercent: 0, yPercent: 0 });
       parallaxTl.fromTo(
         brandWrap,
-        { xPercent: -50, yPercent: -50, y: 0, scale: 1, opacity: 1 },
+        { y: 0, scale: 1, opacity: 1 },
         {
-          xPercent: -50,
-          yPercent: -50,
           y: brandShift,
-          scale: 0.85,
+          scale: 0.88,
           opacity: 0.25,
           ease: 'none',
-          overwrite: 'auto',
         },
         0
       );
