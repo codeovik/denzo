@@ -8706,9 +8706,6 @@ document.addEventListener('DOMContentLoaded', () => {
    * Unified Video Background Stage & Clean Left-Aligned CTA Reveal
    */
   function initOrbitalCtaSection() {
-    const ctaSection = document.getElementById('cta-section');
-    if (!ctaSection) return;
-
     // Autoplay background loop video seamlessly
     const bgVideo = document.getElementById('cta-footer-bg-video');
     if (bgVideo) {
@@ -8718,6 +8715,18 @@ document.addEventListener('DOMContentLoaded', () => {
         playPromise.catch(() => {});
       }
     }
+
+    const studioVideo = document.getElementById('cta-studio-bg-video');
+    if (studioVideo) {
+      studioVideo.muted = true;
+      const studioPlayPromise = studioVideo.play();
+      if (studioPlayPromise !== undefined) {
+        studioPlayPromise.catch(() => {});
+      }
+    }
+
+    const ctaSection = document.getElementById('cta-section');
+    if (!ctaSection) return;
 
     const titleEl = document.getElementById('cta-main-title');
     const subtitleEl = document.getElementById('cta-subtitle');
@@ -8748,7 +8757,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } else if (node.nodeType === Node.ELEMENT_NODE) {
           if (node.tagName === 'BR') {
             container.appendChild(node.cloneNode(true));
-          } else if (node.classList.contains('cta-title-line')) {
+          } else if (node.classList.contains('cta-title-line') || node.children.length > 0) {
             const lineClone = node.cloneNode(true);
             wrapWordsInContainer(lineClone);
             container.appendChild(lineClone);
@@ -8970,23 +8979,100 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const footerCard = document.getElementById('footer-card');
     if (footerCard) {
-      gsap.set(footerCard, {
-        opacity: 0,
-        y: 44,
-      });
+      const brandElements = footerCard.querySelectorAll(
+        '.drift-brand-header, .drift-footer-heading, .drift-footer-desc, .drift-cta-wrap, .drift-meta-copyright, .drift-meta-author, .drift-badge-pill'
+      );
+      const navCols = footerCard.querySelectorAll('.footer-nav-col');
 
-      gsap.to(footerCard, {
-        opacity: 1,
-        y: 0,
-        duration: 0.9,
-        ease: 'power3.out',
-        scrollTrigger: {
-          trigger: footerCard,
-          start: 'top 88%',
-          toggleActions: 'play none none reverse',
-        },
-      });
+      if (brandElements.length > 0) {
+        gsap.set(brandElements, {
+          opacity: 0,
+          y: 24,
+        });
+
+        gsap.to(brandElements, {
+          opacity: 1,
+          y: 0,
+          duration: 0.85,
+          stagger: 0.045,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: footerCard,
+            start: 'top 85%',
+            toggleActions: 'play none none reverse',
+          },
+        });
+      }
+
+      if (navCols.length > 0) {
+        gsap.set(navCols, {
+          opacity: 0,
+          y: 28,
+        });
+
+        gsap.to(navCols, {
+          opacity: 1,
+          y: 0,
+          duration: 0.95,
+          stagger: 0.08,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: footerCard,
+            start: 'top 85%',
+            toggleActions: 'play none none reverse',
+          },
+        });
+      }
     }
+
+    // Dynamic 100% full-width sizing & height synchronization:
+    // Calibrates DENZO to exactly 100% of the footer container width and sets bottom fade to half height
+    const footerWordmark = document.getElementById('footer-wordmark');
+    const footerFade = document.querySelector('.footer-bottom-white-fade');
+    const footerTrack = document.querySelector('.drift-wordmark-track');
+
+    function syncFooterWordmarkFade() {
+      if (!footerWordmark) return;
+      const trackWidth = footerTrack ? footerTrack.clientWidth : window.innerWidth;
+      if (trackWidth > 0) {
+        const baseEstimate = trackWidth / 3.22;
+        footerWordmark.style.fontSize = `${baseEstimate}px`;
+        const textWidth = footerWordmark.scrollWidth;
+        if (textWidth > 0) {
+          const ratio = trackWidth / textWidth;
+          const calibratedSize = Math.floor(baseEstimate * ratio * 0.995);
+          if (calibratedSize > 0) {
+            footerWordmark.style.fontSize = `${calibratedSize}px`;
+          }
+        }
+      }
+
+      if (footerFade) {
+        const rect = footerWordmark.getBoundingClientRect();
+        const wmHeight = rect.height || footerWordmark.offsetHeight;
+        if (wmHeight > 0) {
+          const halfHeight = Math.round(wmHeight * 0.5);
+          footerFade.style.height = `${halfHeight}px`;
+          document.documentElement.style.setProperty('--footer-wordmark-half-height', `${halfHeight}px`);
+        }
+      }
+    }
+
+    syncFooterWordmarkFade();
+
+    if (typeof ResizeObserver !== 'undefined') {
+      const ro = new ResizeObserver(() => {
+        syncFooterWordmarkFade();
+      });
+      if (footerWordmark) ro.observe(footerWordmark);
+      if (footerTrack) ro.observe(footerTrack);
+    }
+
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(syncFooterWordmarkFade);
+    }
+
+    window.addEventListener('resize', syncFooterWordmarkFade, { passive: true });
   }
 
   // Debounced window resize handler to adapt positions on mobile orientation change

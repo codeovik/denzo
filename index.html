@@ -1277,6 +1277,63 @@
       </div>
     </section>
 
+    <!-- ==================== MODERN STUDIO CTA SECTION ==================== -->
+    <section id="cta-section" class="cta-modern-section" aria-labelledby="cta-main-title">
+      <div class="cta-modern-shell">
+        <div class="cta-video-card">
+          <!-- Background Studio Video Layer (cta_inspirational_bg.mp4) -->
+          <div class="cta-card-video-wrap" aria-hidden="true">
+            <video
+              id="cta-studio-bg-video"
+              class="cta-card-bg-video"
+              src="/src/assets/images/cta_inspirational_bg.mp4"
+              poster="/src/assets/images/cta_inspirational_poster.jpg"
+              autoplay
+              loop
+              muted
+              playsinline
+              preload="auto"
+            >
+              <source src="/src/assets/images/cta_inspirational_bg.mp4" type="video/mp4" />
+            </video>
+          </div>
+
+          <!-- Overlay Content Layer (Centered) -->
+          <div class="cta-card-content">
+            <!-- Main Display Heading (Inverted Text Color) -->
+            <h2 id="cta-main-title" class="cta-card-heading">
+              <span class="cta-title-line">Your next big idea</span>
+              <span class="cta-title-line">could start with <span class="cta-heading-highlight services-title-recoleta">AI.</span></span>
+            </h2>
+
+            <!-- Action Buttons:
+                 [ Start a Project → ]
+                 [ Book a Discovery Call ] -->
+            <div id="cta-button-wrap" class="cta-card-actions">
+              <a
+                href="#contact"
+                class="hero-cta-btn hero-cta-primary cta-action-primary"
+                data-contact-trigger
+                aria-label="Start a Project - Open contact inquiry modal"
+              >
+                <span class="hero-cta-text">Start a Project &rarr;</span>
+              </a>
+
+              <a
+                href="https://calendly.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="hero-cta-btn cta-action-secondary"
+                aria-label="Book a Discovery Call"
+              >
+                <span class="hero-cta-text">Book a Discovery Call</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- ==================== CTA & FOOTER UNIFIED VIDEO CONTAINER ==================== -->
     <div id="cta-footer-wrapper" class="cta-footer-unified-wrap">
       <!-- Background Video Layer (Looping across CTA & Footer sections) -->
@@ -1284,95 +1341,53 @@
         <video
           id="cta-footer-bg-video"
           class="cta-footer-video"
-          src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260815_034306_165449ef-7d2e-4e81-850f-1939c5cb442d.mp4"
+          src="https://raw.githubusercontent.com/codeovik/Denzo-files/refs/heads/main/Animate_particle_terrain_landscape_20261016205636.mp4"
           autoplay
           loop
           muted
           playsinline
           preload="auto"
-        ></video>
+        >
+          <source src="https://raw.githubusercontent.com/codeovik/Denzo-files/refs/heads/main/Animate_particle_terrain_landscape_20261016205636.mp4" type="video/mp4" />
+          <source src="https://github.com/codeovik/Denzo-files/raw/refs/heads/main/Animate_particle_terrain_landscape_20261016205636.mp4" type="video/mp4" />
+        </video>
         <div class="cta-footer-video-scrim"></div>
       </div>
 
-      <!-- ==================== MODERN CLEAN LEFT-ALIGNED CTA SECTION ==================== -->
-      <section
-        id="cta-section"
-        class="cta-modern-section"
-        aria-labelledby="cta-main-title"
-      >
-        <div class="cta-modern-container">
-          <div class="cta-left-content">
-            <h2 id="cta-main-title" class="cta-modern-title">
-              Let Your Work Speak For Itself.<br class="cta-title-br" />We'll Handle The Words.
-            </h2>
-
-            <p id="cta-subtitle" class="cta-modern-subtitle">
-              We're here to help you navigate your digital journey. Get in touch with us today to discuss how we can take your business to the next level.
-            </p>
-
-            <div id="cta-button-wrap" class="cta-button-wrap">
-              <a
-                href="#contact"
-                class="hero-cta-btn cta-modern-action-btn"
-                data-contact-trigger
-                aria-label="Get In Touch - Open contact inquiry modal"
-              >
-                <span class="hero-cta-text">Get In Touch</span>
-                <span class="cta-btn-arrow-badge" aria-hidden="true">
-                  <svg width="13" height="13" viewBox="0 0 16 16" fill="none">
-                    <path d="M3.333 8h9.334M8.667 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-                  </svg>
-                </span>
-              </a>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- Pre-Footer Architectural Wordmark Section ("DENZO Studio") (Hidden per instructions) -->
-      <section
-        id="wordmark-section"
-        class="pre-footer-wordmark-section"
-        aria-label="DENZO Studio Wordmark"
-        style="display: none;"
-      >
-        <div class="pre-footer-wordmark-inner">
-          <div class="pre-footer-wordmark-track">
-            <h2 id="pre-footer-wordmark" class="pre-footer-wordmark-title" style="display: none;">DENZO Studio</h2>
-          </div>
-        </div>
-      </section>
-
-      <!-- Site Footer Section -->
+      <!-- Redesigned Site Footer Section (Driftbar-style Editorial Reference with Atmospheric White Fade) -->
       <footer id="site-footer" class="site-footer" aria-label="Site Footer">
         <div class="site-footer-shell">
           <div id="footer-card" class="site-footer-card">
-            <!-- Top Main Grid: Brand + Navigation Columns + CTA -->
+            <!-- Top Main Grid: Brand & Information + Navigation Columns -->
             <div class="footer-top-grid">
-              <!-- Left Column: Brand Logo, Wordmark, Tagline & CTA -->
+              <!-- Left Column: Brand, Subtitle & Callout CTA -->
               <div class="footer-brand-col">
-                <a href="#stage" class="footer-brand-link" aria-label="DENZO STUDIOS Home">
-                  <img
-                    src="https://raw.githubusercontent.com/codeovik/Denzo-files/refs/heads/main/logo.png"
-                    alt="DENZO STUDIOS"
-                    class="footer-brand-logo"
-                  />
-                </a>
+                <!-- Brand Logo -->
+                <h2 class="drift-footer-heading">
+                  <a href="#" class="drift-footer-logo-link" aria-label="DENZO STUDIOS">
+                    <img
+                      src="https://raw.githubusercontent.com/codeovik/Denzo-files/refs/heads/main/logo.png"
+                      alt="DENZO STUDIOS"
+                      class="drift-footer-logo-img"
+                    />
+                  </a>
+                </h2>
 
-                <p class="footer-brand-tagline">
-                  Building custom AI systems, intelligent automation, and modern digital products.
+                <!-- Brand Subtitle / Description -->
+                <p class="drift-footer-desc">
+                  AI-powered technology. Built for growth.
                 </p>
 
-                <!-- Have something in mind? CTA Block -->
-                <div class="footer-cta-block">
-                  <p class="footer-cta-label">Have something in mind?</p>
+                <!-- Callout: Have something in mind? Let's build it → -->
+                <div class="drift-cta-wrap">
+                  <p class="drift-cta-prompt">Have something in mind?</p>
                   <a
                     href="#contact"
-                    class="hero-cta-btn hero-cta-primary footer-build-btn"
+                    class="hero-cta-btn hero-cta-primary footer-cta-btn"
                     data-contact-trigger
-                    aria-label="Let's build it"
+                    aria-label="Let's build it - Open contact form"
                   >
-                    <span class="hero-cta-text">Let's build it</span>
+                    <span class="hero-cta-text">Let's build it &rarr;</span>
                   </a>
                 </div>
               </div>
@@ -1381,72 +1396,48 @@
               <div class="footer-nav-columns">
                 <!-- Column 1: Solutions -->
                 <div class="footer-nav-col">
-                  <h3 class="footer-col-heading">Solutions</h3>
-                  <ul class="footer-col-list">
-                    <li><a href="#services-section" class="footer-nav-link"><span class="footer-link-text">AI Solutions</span></a></li>
-                    <li><a href="#services-section" class="footer-nav-link"><span class="footer-link-text">Automation</span></a></li>
-                    <li><a href="#services-section" class="footer-nav-link"><span class="footer-link-text">Applications</span></a></li>
-                    <li><a href="#services-section" class="footer-nav-link"><span class="footer-link-text">Web Development</span></a></li>
-                    <li><a href="#services-section" class="footer-nav-link"><span class="footer-link-text">Custom Technology</span></a></li>
+                  <h3 class="drift-col-heading">Solutions</h3>
+                  <ul class="drift-col-list">
+                    <li><a href="#services-section" class="drift-nav-link">AI Solutions</a></li>
+                    <li><a href="#services-section" class="drift-nav-link">Automation</a></li>
+                    <li><a href="#services-section" class="drift-nav-link">Applications</a></li>
+                    <li><a href="#services-section" class="drift-nav-link">Web Development</a></li>
+                    <li><a href="#services-section" class="drift-nav-link">Custom Technology</a></li>
                   </ul>
                 </div>
 
                 <!-- Column 2: Company -->
                 <div class="footer-nav-col">
-                  <h3 class="footer-col-heading">Company</h3>
-                  <ul class="footer-col-list">
-                    <li><a href="#services-section" class="footer-nav-link"><span class="footer-link-text">Work</span></a></li>
-                    <li><a href="#ai-statement-section" class="footer-nav-link"><span class="footer-link-text">About</span></a></li>
-                    <li><a href="#contact" class="footer-nav-link" data-contact-trigger><span class="footer-link-text">Careers</span></a></li>
-                    <li><a href="#contact" class="footer-nav-link" data-contact-trigger><span class="footer-link-text">Contact</span></a></li>
+                  <h3 class="drift-col-heading">Company</h3>
+                  <ul class="drift-col-list">
+                    <li><a href="#work-process-section" class="drift-nav-link">Work</a></li>
+                    <li><a href="#ai-statement-section" class="drift-nav-link">About</a></li>
+                    <li><a href="#contact" class="drift-nav-link" data-contact-trigger>Careers</a></li>
+                    <li><a href="#contact" class="drift-nav-link" data-contact-trigger>Contact</a></li>
                   </ul>
                 </div>
 
                 <!-- Column 3: Connect -->
                 <div class="footer-nav-col">
-                  <h3 class="footer-col-heading">Connect</h3>
-                  <ul class="footer-col-list">
-                    <li>
-                      <a
-                        href="https://www.linkedin.com"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        class="footer-nav-link footer-social-link"
-                      >
-                        <span class="footer-link-text">LinkedIn</span>
-                      </a>
-                    </li>
-                    <li>
-                      <a
-                        href="https://www.instagram.com"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        class="footer-nav-link footer-social-link"
-                      >
-                        <span class="footer-link-text">Instagram</span>
-                      </a>
-                    </li>
+                  <h3 class="drift-col-heading">Connect</h3>
+                  <ul class="drift-col-list">
+                    <li><a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" class="drift-nav-link">LinkedIn</a></li>
+                    <li><a href="https://instagram.com" target="_blank" rel="noopener noreferrer" class="drift-nav-link">Instagram</a></li>
                   </ul>
                 </div>
               </div>
-            </div>
-
-            <!-- Horizontal Hairline Divider -->
-            <div class="footer-divider" aria-hidden="true"></div>
-
-            <!-- Bottom Bar: Copyright & Legal Links -->
-            <div class="footer-bottom-bar">
-              <p class="footer-copyright">© 2026 DENZO STUDIOS.</p>
-              <div class="footer-legal-links">
-                <a href="#privacy" class="footer-legal-link"><span class="footer-link-text">Privacy Policy</span></a>
-                <a href="#terms" class="footer-legal-link"><span class="footer-link-text">Terms &amp; Conditions</span></a>
-              </div>
-            </div>
           </div>
-
-          <!-- Architectural Grounding Pedestal Lines (Inspired by Reference Design) -->
-          <div class="cta-footer-grounding" aria-hidden="true"></div>
         </div>
+
+        <!-- Giant Full Width Display Wordmark ("DENZO") -->
+        <div class="drift-wordmark-container">
+          <div class="drift-wordmark-track">
+            <h2 id="footer-wordmark" class="drift-wordmark-title" aria-label="DENZO">DENZO</h2>
+          </div>
+        </div>
+
+        <!-- Atmospheric White Fade at Bottom (Height = half of wordmark, 0% solid white to 100% transparent white) -->
+        <div class="footer-bottom-white-fade" aria-hidden="true"></div>
       </footer>
     </div>
 
