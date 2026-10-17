@@ -4157,10 +4157,7 @@ section#problem-first-section:nth-of-type(5) > div:nth-of-type(1) > div#problemF
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #1a41f5;
-  background-image: url('/src/assets/images/cta_inspirational_poster.jpg');
-  background-size: cover;
-  background-position: center;
+  background-color: #0b0f19;
   isolation: isolate;
 }
 
@@ -4188,9 +4185,16 @@ section#problem-first-section:nth-of-type(5) > div:nth-of-type(1) > div#problemF
   will-change: transform;
 }
 
-/* Background video overlay completely removed */
-.cta-card-light-scrim {
-  display: none !important;
+/* Black-transparent overlay for optimal text contrast and visibility */
+.cta-card-video-overlay {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at center, rgba(0, 0, 0, 0.45) 0%, rgba(0, 0, 0, 0.65) 100%),
+              linear-gradient(180deg, rgba(0, 0, 0, 0.42) 0%, rgba(0, 0, 0, 0.55) 50%, rgba(0, 0, 0, 0.72) 100%);
+  pointer-events: none;
+  z-index: 2;
 }
 
 /* Overlay Content Layer (Selector 1 - Center Aligned) */
@@ -4209,7 +4213,7 @@ section#cta-section:nth-of-type(7) > div:nth-of-type(1) > div:nth-of-type(1) > d
   text-align: center;
 }
 
-/* Main Display Heading (Invert Color of Background) */
+/* Main Display Heading */
 .cta-card-heading {
   font-family: var(--font-family);
   font-size: clamp(38px, 5.2vw, 76px);
@@ -4217,7 +4221,7 @@ section#cta-section:nth-of-type(7) > div:nth-of-type(1) > div:nth-of-type(1) > d
   line-height: 1.1;
   letter-spacing: -0.035em;
   color: #FFFFFF;
-  mix-blend-mode: difference;
+  text-shadow: 0 4px 30px rgba(0, 0, 0, 0.8), 0 2px 8px rgba(0, 0, 0, 0.6);
   text-align: center;
   margin: 0 0 clamp(28px, 4.2vh, 44px);
 }
@@ -4237,7 +4241,6 @@ section#cta-section:nth-of-type(7) > div:nth-of-type(1) > div:nth-of-type(1) > d
   font-style: italic;
   font-weight: 500;
   color: #FFFFFF;
-  mix-blend-mode: difference;
   letter-spacing: -0.01em;
   display: inline;
 }
