@@ -8729,10 +8729,19 @@ document.addEventListener('DOMContentLoaded', () => {
    * Unified Video Background Stage & Clean Left-Aligned CTA Reveal
    */
   function initOrbitalCtaSection() {
-    // Autoplay background loop video seamlessly
+    // Autoplay background loop video seamlessly in slow motion
     const bgVideo = document.getElementById('cta-footer-bg-video');
     if (bgVideo) {
       bgVideo.muted = true;
+      const applySlowMotion = () => {
+        try {
+          bgVideo.playbackRate = 0.5; // Smooth slow motion (half speed)
+        } catch (_) {}
+      };
+      applySlowMotion();
+      bgVideo.addEventListener('loadeddata', applySlowMotion);
+      bgVideo.addEventListener('canplay', applySlowMotion);
+      bgVideo.addEventListener('play', applySlowMotion);
       const playPromise = bgVideo.play();
       if (playPromise !== undefined) {
         playPromise.catch(() => {});
