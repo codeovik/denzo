@@ -9127,3 +9127,164 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 250);
   });
 });
+
+/* ==========================================================================
+   PROJECT DELIVERY NOTICE POPUP CONTROLLER
+   - Automatically opens 10 seconds after page loading starts
+   - Re-opens automatically 10 seconds after clicking the close button
+   - Eye-catching opening and closing animations with glowing amber pulse
+   ========================================================================== */
+(function initDeliveryNoticeModule() {
+  function startNoticeController() {
+    const modal = document.getElementById('deliveryNoticeModal');
+    const card = document.getElementById('deliveryNoticeCard');
+    const closeBtn = document.getElementById('deliveryNoticeCloseBtn');
+    const dismissBtn = document.getElementById('deliveryNoticeDismissBtn');
+    const backdrop = document.getElementById('deliveryNoticeBackdrop');
+    const copyBtn = document.getElementById('deliveryNoticeCopyEmailBtn');
+    const copyBtnText = document.getElementById('deliveryCopyBtnText');
+
+    if (!modal || !card) return;
+
+    let reappearTimer = null;
+    let isOpen = false;
+    let isAnimating = false;
+
+    // Open notice popup with eye-catching entrance animation
+    function openDeliveryNotice() {
+      if (isOpen || isAnimating) return;
+      if (reappearTimer) {
+        clearTimeout(reappearTimer);
+        reappearTimer = null;
+      }
+
+      isAnimating = true;
+      isOpen = true;
+
+      modal.style.display = 'flex';
+      modal.setAttribute('aria-hidden', 'false');
+      modal.classList.remove('is-closing');
+
+      // Trigger reflow to restart entrance transition
+      void card.offsetWidth;
+
+      modal.classList.add('is-open');
+
+      // Wait for entrance transition to settle
+      setTimeout(() => {
+        isAnimating = false;
+      }, 500);
+
+      // Focus close button for accessibility
+      if (closeBtn) {
+        setTimeout(() => closeBtn.focus(), 200);
+      }
+    }
+
+    // Close notice popup with eye-catching exit animation and schedule 10s re-appearance
+    function closeDeliveryNotice() {
+      if (!isOpen || isAnimating) return;
+      isAnimating = true;
+
+      modal.classList.remove('is-open');
+      modal.classList.add('is-closing');
+
+      // Exit transition duration is 360ms
+      setTimeout(() => {
+        modal.classList.remove('is-closing');
+        modal.style.display = 'none';
+        modal.setAttribute('aria-hidden', 'true');
+        isOpen = false;
+        isAnimating = false;
+
+        // Schedule automatic re-appearance exactly 10 seconds after closing
+        if (reappearTimer) clearTimeout(reappearTimer);
+        reappearTimer = setTimeout(() => {
+          openDeliveryNotice();
+        }, 10000);
+      }, 370);
+    }
+
+    // Attach click events
+    if (closeBtn) {
+      closeBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        closeDeliveryNotice();
+      });
+    }
+
+    if (dismissBtn) {
+      dismissBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        closeDeliveryNotice();
+      });
+    }
+
+    if (backdrop) {
+      backdrop.addEventListener('click', (e) => {
+        e.preventDefault();
+        closeDeliveryNotice();
+      });
+    }
+
+    // Close on Escape key press
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && isOpen && !isAnimating) {
+        closeDeliveryNotice();
+      }
+    });
+
+    // Copy email to clipboard utility
+    if (copyBtn) {
+      copyBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const email = 'ovikbiswas01@gmail.com';
+        const restoreText = () => {
+          setTimeout(() => {
+            if (copyBtnText) copyBtnText.textContent = 'Copy Email';
+          }, 2400);
+        };
+
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(email)
+            .then(() => {
+              if (copyBtnText) copyBtnText.textContent = 'Copied! ✓';
+              restoreText();
+            })
+            .catch(() => {
+              if (copyBtnText) copyBtnText.textContent = 'Copied! ✓';
+              restoreText();
+            });
+        } else {
+          try {
+            const temp = document.createElement('textarea');
+            temp.value = email;
+            document.body.appendChild(temp);
+            temp.select();
+            document.execCommand('copy');
+            document.body.removeChild(temp);
+            if (copyBtnText) copyBtnText.textContent = 'Copied! ✓';
+            restoreText();
+          } catch (err) {
+            prompt('Copy email:', email);
+          }
+        }
+      });
+    }
+
+    // Automatically appear after 10 seconds of page loading
+    setTimeout(() => {
+      openDeliveryNotice();
+    }, 10000);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', startNoticeController);
+  } else {
+    startNoticeController();
+  }
+})();
+
